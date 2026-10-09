@@ -4,7 +4,7 @@
     return (r || document).querySelector(s);
   };
   var $$ = function (s, r) {
-    return Array.prototype.slice.call((r || document).querySelectorAll(s));
+    return Array.from((r || document).querySelectorAll(s));
   };
   var SUPPORTS_SQ = !!(
     window.CSS &&
@@ -484,13 +484,22 @@
       radius: state.radius,
     };
   }
+  var _colorsCache = {
+    l: {
+      tint: "247, 247, 247",
+      hair: "rgba(0, 0, 0, 0.14)",
+      hl: "rgba(255, 255, 255, 0.75)",
+      hl2: "rgba(255, 255, 255, 0.25)",
+    },
+    d: {
+      tint: "28, 28, 30",
+      hair: "rgba(255, 255, 255, 0.16)",
+      hl: "rgba(255, 255, 255, 0.16)",
+      hl2: "rgba(255, 255, 255, 0.04)",
+    },
+  };
   function colors(dark) {
-    return {
-      tint: dark ? "28, 28, 30" : "247, 247, 247",
-      hair: dark ? "rgba(255, 255, 255, 0.16)" : "rgba(0, 0, 0, 0.14)",
-      hl: dark ? "rgba(255, 255, 255, 0.16)" : "rgba(255, 255, 255, 0.75)",
-      hl2: dark ? "rgba(255, 255, 255, 0.04)" : "rgba(255, 255, 255, 0.25)",
-    };
+    return _colorsCache[dark ? "d" : "l"];
   }
   function shadowParts(p, dark) {
     var c = colors(dark),
@@ -541,11 +550,7 @@
     radius: 22,
   };
   function step(o) {
-    var r = {},
-      k;
-    for (k in BASE) r[k] = BASE[k];
-    for (k in o) r[k] = o[k];
-    return r;
+    return Object.assign({}, BASE, o);
   }
   var STEPS = [
     {
@@ -709,9 +714,7 @@
   }
 
   /* ---------- render ---------- */
-  var MAT_NAME = function () {
-    return state.material === "custom" ? "personalizado" : state.material;
-  };
+  var UNITS = { blur: " px", sat: " %", tint: " %", noise: "" };
   function render() {
     var p = eff(),
       dark = state.mode === "dark",
@@ -750,7 +753,7 @@
 
     /* inspector */
     ["blur", "sat", "tint", "noise"].forEach(function (k) {
-      var u = { blur: " px", sat: " %", tint: " %", noise: "" }[k];
+      var u = UNITS[k];
       $("#rg-" + k).value = L[k].v;
       $("#val-" + k).textContent = L[k].v + u;
     });
@@ -779,8 +782,7 @@
     });
 
     /* código (de la receta real, no de la vista naive) */
-    var real = naive ? eff() : p;
-    $("#code").innerHTML = hilite(genCSS(real, dark));
+    $("#code").innerHTML = hilite(genCSS(p, dark));
   }
 
   /* ---------- eventos ---------- */
@@ -794,7 +796,7 @@
         state.material = "custom";
     } else if (t.dataset.on) {
       state.layers[t.dataset.on].on = t.checked;
-      if (["blur", "sat", "tint"].indexOf(t.dataset.on) > -1)
+      if (["blur", "sat", "tint"].includes(t.dataset.on))
         state.material = "custom";
     } else if (t.id === "rg-radius") {
       state.radius = +t.value;
