@@ -1,0 +1,97 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Frosted Glass Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="style.css">
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Material translúcido clásico · iOS 7 a iOS 18</p>
+    <h1 style="margin-top:14px">Frosted Glass Lab</h1>
+    <p class="lede">El vidrio esmerilado de Apple es una pila de capas, no un blur. Arrastra el panel sobre el fondo, apaga las capas una por una y mira qué se pierde.</p>
+  </header>
+
+  <section class="lab" aria-label="Laboratorio">
+    <div class="stagecol">
+      <div class="stage" id="stage">
+        <div class="bg" id="bg"></div>
+        <span class="chip state" id="chipState" aria-live="polite">Receta completa</span>
+        <button class="chip hold" id="hold" type="button" aria-pressed="false">Mantén para ver solo blur</button>
+        <div class="gl bar" id="bar" aria-hidden="true"></div>
+        <div class="gl panel" id="panel" tabindex="0" role="group" aria-label="Panel de vidrio arrastrable"></div>
+      </div>
+      <div class="stagefoot">
+        <div class="seg" data-seg="bg" role="group" aria-label="Fondo">
+          <button type="button" data-v="mosaic">Mosaico</button>
+          <button type="button" data-v="sunset">Paisaje</button>
+          <button type="button" data-v="feed">App</button>
+        </div>
+        <label class="sw"><input type="checkbox" role="switch" id="animate"><span class="trk" aria-hidden="true"></span><span class="nm">Mover el fondo</span></label>
+        <label class="sw"><input type="checkbox" role="switch" id="showbar" checked><span class="trk" aria-hidden="true"></span><span class="nm">Barra de pestañas</span></label>
+      </div>
+    </div>
+
+    <aside class="inspector" aria-label="Capas del material">
+      <div class="group">
+        <span class="eyebrow">Apariencia</span>
+        <div class="seg wide" data-seg="mode" role="group" aria-label="Apariencia">
+          <button type="button" data-v="light" style="font-family:var(--font);font-size:13px">Claro</button>
+          <button type="button" data-v="dark" style="font-family:var(--font);font-size:13px">Oscuro</button>
+        </div>
+        <span class="eyebrow" style="margin-top:4px">Grosor · <span id="matName" style="color:var(--fg)">regular</span></span>
+        <div class="seg wide" data-seg="material" role="group" aria-label="Grosor">
+          <button type="button" data-v="ultraThin" aria-label="ultraThin">XS</button>
+          <button type="button" data-v="thin" aria-label="thin">S</button>
+          <button type="button" data-v="regular" aria-label="regular">M</button>
+          <button type="button" data-v="thick" aria-label="thick">L</button>
+          <button type="button" data-v="ultraThick" aria-label="ultraThick">XL</button>
+        </div>
+        <span class="eyebrow" style="margin-top:4px">Vista</span>
+        <div class="seg wide" data-seg="view" role="group" aria-label="Vista">
+          <button type="button" data-v="full" style="font-family:var(--font);font-size:13px">Receta completa</button>
+          <button type="button" data-v="naive" style="font-family:var(--font);font-size:13px">Solo blur</button>
+        </div>
+      </div>
+      <hr>
+      <div class="group" id="gFill"><span class="eyebrow">Relleno</span></div>
+      <hr>
+      <div class="group" id="gFinish"><span class="eyebrow">Acabado</span></div>
+      <hr>
+      <div class="group" id="gShape"><span class="eyebrow">Forma</span></div>
+      <hr>
+      <div class="group" id="gText"><span class="eyebrow">Texto</span></div>
+    </aside>
+
+    <div class="codebox">
+      <div class="codehead">
+        <span class="eyebrow">CSS resultante</span>
+        <button class="btn" id="copy" type="button">Copiar CSS</button>
+      </div>
+      <pre class="code" id="code" tabindex="0"></pre>
+    </div>
+  </section>
+
+  <section class="build" aria-labelledby="hBuild">
+    <div>
+      <h2 id="hBuild">Construcción capa por capa</h2>
+      <p class="lede">El mismo panel sumando una capa por celda. Usa la apariencia y el fondo que elegiste arriba, así puedes ver cómo cambia cada paso según lo que hay detrás.</p>
+    </div>
+    <div class="steps" id="steps"></div>
+  </section>
+
+  <section class="build" aria-labelledby="hTry">
+    <h2 id="hTry">Cosas para probar</h2>
+    <div class="tries">
+      <div class="try"><strong>Apaga la saturación en Paisaje</strong><p>Sin ella el blur deja el cielo en un gris apagado. Con 180 % el naranja del sol sobrevive al difuminado.</p></div>
+      <div class="try"><strong>Baja el tinte a cero en App</strong><p>El texto de atrás sigue casi legible a través del vidrio. El tinte no es decoración, es lo que garantiza el contraste.</p></div>
+      <div class="try"><strong>Activa Vibrancy en oscuro</strong><p>Las etiquetas dejan de ser un gris plano y toman el color del fondo. Se aprecia mejor sobre Mosaico.</p></div>
+      <div class="try"><strong>Quita borde y brillo</strong><p>Cada uno pesa poco, pero sin ellos el panel pierde canto y se lee como una mancha en lugar de un objeto.</p></div>
+    </div>
+    <p class="foot">Los grosores son aproximaciones calibradas a ojo, no los valores internos del sistema. La referencia pública más cercana es el sample code <code>UIImageEffects</code>, que usa saturación 1,8 y un tinte de alfa entre 0,3 y 0,82 según el estilo. El radio de <code>blur()</code> en CSS es una desviación estándar, así que no equivale 1 a 1 al radio de esas funciones.</p>
+  </section>
+</div>
+
+<script src="script.js"></script>
+
+</body></html>
