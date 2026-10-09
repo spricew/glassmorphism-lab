@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://spricew.github.io/frosted-glass-lab/sitemap.xml
