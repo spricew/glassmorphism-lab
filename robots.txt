@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://spricew.github.io/frosted-glass-lab/sitemap.xml
+Sitemap: https://spricew.github.io/glassmorphism-lab/sitemap.xml
