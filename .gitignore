@@ -1,0 +1,16 @@
+# Environment variables
+.env
+.env.*
+*.env
+
+# AI Agent instruction and configuration files
+AGENTS.md
+STYLE.md
+CLAUDE.md
+GEMINI.md
+.agents/
+
+# OS metadata
+Thumbs.db
+Desktop.ini
+.DS_Store
