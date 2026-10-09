@@ -707,7 +707,7 @@
           );
         return l.replace(
           /^(\s*)([a-z-]+)(:)/,
-          '$1<s9pan class="k">$2</span>$3',
+          '$1<span class="k">$2</span>$3',
         );
       })
       .join("\n");
