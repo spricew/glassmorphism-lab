@@ -1,12 +1,30 @@
 /* Reset from HTML */
-:root { color-scheme: light; box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
-html { scroll-padding-top: env(safe-area-inset-top, 0px); }
-body { margin: 0; padding: 0; font: 14px -apple-system, BlinkMacSystemFont, sans-serif; background: #fff; color: #000; }
-img { max-width: 100%; }
-[hidden]:not([hidden=until-found i]) { display: none !important; }
+:root {
+  color-scheme: light;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+html {
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+}
+body {
+  margin: 0;
+  padding: 0;
+  font:
+    14px -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  background: #fff;
+  color: #000;
+}
+img {
+  max-width: 100%;
+}
+[hidden]:not([hidden="until-found" i]) {
+  display: none !important;
+}
 
-/* Concepto: banco de pruebas. Escenario con panel arrastrable a la izquierda, inspector de capas a la derecha,
-   construcción paso a paso debajo. La interfaz es neutra y fría para que el único color intenso sea el del fondo. */
 :root {
   --bg: #f3f4f7;
   --surface: #ffffff;
@@ -713,10 +731,19 @@ hr {
   }
 }
 
-.main-title { margin-top: 14px; }
+.main-title {
+  margin-top: 14px;
+}
 
-.mt-4 { margin-top: 4px; }
+.mt-4 {
+  margin-top: 4px;
+}
 
-.mat-name { color: var(--fg); }
+.mat-name {
+  color: var(--fg);
+}
 
-.font-btn { font-family: var(--font); font-size: 13px; }
+.font-btn {
+  font-family: var(--font);
+  font-size: 13px;
+}
