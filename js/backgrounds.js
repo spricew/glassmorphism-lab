@@ -19,7 +19,7 @@ function mosaicSVG() {
     '<g fill="none" stroke="#fff" stroke-width="5"><circle cx="830" cy="560" r="335"/><circle cx="260" cy="250" r="250"/></g>' +
     '<path d="M0 880 L1600 836" stroke="#fff" stroke-width="7"/>' +
     `<text x="110" y="150" font-size="130" font-weight="800" fill="#fff" ${FONT}>Aa Gg 42</text>` +
-    `<text x="1000" y="860" font-size="84" font-weight="700" fill="#0b0b10" ${FONT}>Frosted</text>` +
+    `<text x="1000" y="860" font-size="84" font-weight="700" fill="#0b0b10" ${FONT}>Glass</text>` +
     "</svg>"
   );
 }
