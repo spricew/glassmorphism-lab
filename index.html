@@ -1,14 +1,28 @@
 <!doctype html>
-<html>
+<html lang="es">
   <head>
-    <meta charset="utf8" />
+    <meta charset="utf-8" />
     <meta
       name="viewport"
       content="width=device-width,initial-scale=1,viewport-fit=cover"
     />
-  </head>
-  <body>
-    <title>Frosted Glass Lab</title>
+    <title>Frosted Glass Lab — desglose del backdrop-filter de iOS</title>
+    <meta
+      name="description"
+      content="Laboratorio interactivo del vidrio esmerilado (frosted glass) de iOS: apila backdrop-filter, saturación, tinte, borde y brillo capa por capa y observa cómo cambia el material."
+    />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://spricew.github.io/frosted-glass-lab/" />
+    <meta
+      name="theme-color"
+      content="#f3f4f7"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#0c0e12"
+      media="(prefers-color-scheme: dark)"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -16,7 +30,60 @@
       href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap"
     />
     <link rel="stylesheet" href="style.css" />
-
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "SoftwareApplication",
+            "@id": "https://spricew.github.io/frosted-glass-lab/#app",
+            "name": "Frosted Glass Lab",
+            "url": "https://spricew.github.io/frosted-glass-lab/",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Web",
+            "browserRequirements": "Requiere JavaScript",
+            "inLanguage": "es",
+            "description": "Laboratorio interactivo para desglosar el vidrio esmerilado (frosted glass) de iOS capa por capa: backdrop-filter, saturación, tinte, borde y brillo.",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "EUR"
+            }
+          },
+          {
+            "@type": "HowTo",
+            "@id": "https://spricew.github.io/frosted-glass-lab/#howto",
+            "name": "Cómo recrear el vidrio esmerilado de iOS con CSS",
+            "inLanguage": "es",
+            "description": "Reconstruye el material translúcido de iOS apilando capas de CSS y ajustando cada una hasta obtener el efecto deseado.",
+            "step": [
+              {
+                "@type": "HowToStep",
+                "name": "Aplica el desenfoque",
+                "text": "Usa backdrop-filter: blur() para difuminar lo que hay detrás del panel."
+              },
+              {
+                "@type": "HowToStep",
+                "name": "Añade saturación",
+                "text": "Combinar blur() con saturate() evita que el color de fondo se vuelva gris apagado."
+              },
+              {
+                "@type": "HowToStep",
+                "name": "Aplica el tinte",
+                "text": "Añade un relleno translúcido con background-color en rgba para garantizar el contraste del texto."
+              },
+              {
+                "@type": "HowToStep",
+                "name": "Remata con borde y brillo",
+                "text": "Un borde sutil y un brillo interior definen el canto del panel para que se lea como un objeto."
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body>
     <div class="wrap">
       <header>
         <p class="eyebrow">Material translúcido clásico · iOS 7 a iOS 18</p>
