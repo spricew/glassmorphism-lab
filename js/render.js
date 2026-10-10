@@ -44,10 +44,14 @@ export function render() {
 
   /* inspector */
   UI.gFill.forEach(function (f) {
-    $("#rg-" + f.k).value = L[f.k].v;
+    var rg = $("#rg-" + f.k);
+    rg.value = L[f.k].v;
+    rg.setAttribute("aria-valuetext", L[f.k].v + f.unit);
     $("#val-" + f.k).textContent = L[f.k].v + f.unit;
   });
-  $("#rg-radius").value = state.radius;
+  var rad = $("#rg-radius");
+  rad.value = state.radius;
+  rad.setAttribute("aria-valuetext", state.radius + " px");
   $("#val-radius").textContent = state.radius + " px";
   Object.keys(L).forEach(function (k) {
     var cb = $("#on-" + k);
@@ -58,9 +62,16 @@ export function render() {
   $("#animate").checked = state.animate;
   $("#showbar").checked = state.bar;
   $$(".seg").forEach(function (sg) {
-    var key = sg.dataset.seg;
-    $$("button", sg).forEach(function (b) {
-      b.setAttribute("aria-pressed", String(state[key] === b.dataset.v));
+    var key = sg.dataset.seg,
+      btns = $$('button[role="radio"]', sg),
+      current = -1;
+    btns.forEach(function (b, i) {
+      if (state[key] === b.dataset.v) current = i;
+    });
+    btns.forEach(function (b, i) {
+      var on = i === current || (current < 0 && i === 0);
+      b.setAttribute("aria-checked", String(i === current));
+      b.tabIndex = on ? 0 : -1;
     });
   });
 

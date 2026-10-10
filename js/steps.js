@@ -67,7 +67,7 @@ var stepsEl = $("#steps");
 export function buildSteps() {
   stepsEl.innerHTML = STEPS.map(function (s, i) {
     return (
-      `<article class="step"><div class="mini" data-i="${i}"><div class="gl">` +
+      `<article class="step"><div class="mini" data-i="${i}" aria-hidden="true"><div class="gl">` +
       shell(
         panelHTML(
           "Panel",

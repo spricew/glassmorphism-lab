@@ -37,6 +37,30 @@ export function bindEvents() {
     }
     render();
   });
+
+  /* navegación por teclado dentro de los grupos de selección */
+  document.addEventListener("keydown", function (e) {
+    var b = e.target.closest
+      ? e.target.closest('.seg button[role="radio"]')
+      : null;
+    if (!b) return;
+    var seg = b.parentNode,
+      btns = $$('button[role="radio"]', seg),
+      i = btns.indexOf(b),
+      next = i;
+    if (e.key === "ArrowRight" || e.key === "ArrowDown")
+      next = (i + 1) % btns.length;
+    else if (e.key === "ArrowLeft" || e.key === "ArrowUp")
+      next = (i - 1 + btns.length) % btns.length;
+    else if (e.key === "Home") next = 0;
+    else if (e.key === "End") next = btns.length - 1;
+    else return;
+    e.preventDefault();
+    if (next === i) return;
+    btns[next].focus();
+    btns[next].click();
+  });
+
   $("#animate").addEventListener("change", function (e) {
     state.animate = e.target.checked;
     render();
@@ -130,8 +154,12 @@ export function bindEvents() {
       txt = $("#code").textContent;
     function done(ok) {
       btn.textContent = ok ? "Copiado" : "Selecciona y copia";
+      $("#copyStatus").textContent = ok
+        ? "CSS copiado al portapapeles"
+        : "No se pudo copiar automáticamente; el CSS quedó seleccionado";
       setTimeout(function () {
         btn.textContent = "Copiar CSS";
+        $("#copyStatus").textContent = "";
       }, 1600);
     }
     function fallback() {

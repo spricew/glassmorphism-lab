@@ -85,6 +85,7 @@
     </script>
   </head>
   <body>
+    <a class="skip-link" href="#main">Saltar al contenido</a>
     <div class="wrap">
       <header>
         <p class="eyebrow">Material translúcido clásico · iOS 7 a iOS 18</p>
@@ -96,10 +97,11 @@
         </p>
       </header>
 
+      <main id="main" tabindex="-1">
       <section class="lab" aria-label="Laboratorio">
         <div class="stagecol">
           <div class="stage" id="stage">
-            <div class="bg" id="bg"></div>
+            <div class="bg" id="bg" aria-hidden="true"></div>
             <span class="chip state" id="chipState" aria-live="polite"
               >Receta completa</span
             >
@@ -112,19 +114,24 @@
               Mantén para ver solo blur
             </button>
             <div class="gl bar" id="bar" aria-hidden="true"></div>
+            <p class="sr-only" id="panelHint">
+              Puedes mover el panel con las teclas de flecha cuando está
+              enfocado.
+            </p>
             <div
               class="gl panel"
               id="panel"
               tabindex="0"
               role="group"
               aria-label="Panel de vidrio arrastrable"
+              aria-describedby="panelHint"
             ></div>
           </div>
           <div class="stagefoot">
-            <div class="seg" data-seg="bg" role="group" aria-label="Fondo">
-              <button type="button" data-v="mosaic">Mosaico</button>
-              <button type="button" data-v="sunset">Paisaje</button>
-              <button type="button" data-v="feed">App</button>
+            <div class="seg" data-seg="bg" role="radiogroup" aria-label="Fondo">
+              <button type="button" role="radio" aria-checked="false" data-v="mosaic">Mosaico</button>
+              <button type="button" role="radio" aria-checked="false" data-v="sunset">Paisaje</button>
+              <button type="button" role="radio" aria-checked="false" data-v="feed">App</button>
             </div>
             <label class="sw"
               ><input type="checkbox" role="switch" id="animate" /><span
@@ -149,13 +156,13 @@
             <div
               class="seg wide"
               data-seg="mode"
-              role="group"
+              role="radiogroup"
               aria-label="Apariencia"
             >
-              <button type="button" data-v="light" class="font-btn">
+              <button type="button" role="radio" aria-checked="false" data-v="light" class="font-btn">
                 Claro
               </button>
-              <button type="button" data-v="dark" class="font-btn">
+              <button type="button" role="radio" aria-checked="false" data-v="dark" class="font-btn">
                 Oscuro
               </button>
             </div>
@@ -165,18 +172,18 @@
             <div
               class="seg wide"
               data-seg="material"
-              role="group"
+              role="radiogroup"
               aria-label="Grosor"
             >
-              <button type="button" data-v="ultraThin" aria-label="ultraThin">
+              <button type="button" role="radio" aria-checked="false" data-v="ultraThin" aria-label="ultraThin">
                 XS
               </button>
-              <button type="button" data-v="thin" aria-label="thin">S</button>
-              <button type="button" data-v="regular" aria-label="regular">
+              <button type="button" role="radio" aria-checked="false" data-v="thin" aria-label="thin">S</button>
+              <button type="button" role="radio" aria-checked="false" data-v="regular" aria-label="regular">
                 M
               </button>
-              <button type="button" data-v="thick" aria-label="thick">L</button>
-              <button type="button" data-v="ultraThick" aria-label="ultraThick">
+              <button type="button" role="radio" aria-checked="false" data-v="thick" aria-label="thick">L</button>
+              <button type="button" role="radio" aria-checked="false" data-v="ultraThick" aria-label="ultraThick">
                 XL
               </button>
             </div>
@@ -184,13 +191,13 @@
             <div
               class="seg wide"
               data-seg="view"
-              role="group"
+              role="radiogroup"
               aria-label="Vista"
             >
-              <button type="button" data-v="full" class="font-btn">
+              <button type="button" role="radio" aria-checked="false" data-v="full" class="font-btn">
                 Receta completa
               </button>
-              <button type="button" data-v="naive" class="font-btn">
+              <button type="button" role="radio" aria-checked="false" data-v="naive" class="font-btn">
                 Solo blur
               </button>
             </div>
@@ -214,9 +221,12 @@
         <div class="codebox">
           <div class="codehead">
             <span class="eyebrow">CSS resultante</span>
-            <button class="btn" id="copy" type="button">Copiar CSS</button>
+            <button class="btn" id="copy" type="button" aria-describedby="copyStatus">
+              Copiar CSS
+            </button>
+            <span class="sr-only" id="copyStatus" role="status" aria-live="polite"></span>
           </div>
-          <pre class="code" id="code" tabindex="0"></pre>
+          <pre class="code" id="code" tabindex="0" aria-label="CSS resultante"></pre>
         </div>
       </section>
 
@@ -273,6 +283,7 @@
           equivale 1 a 1 al radio de esas funciones.
         </p>
       </section>
+      </main>
     </div>
 
     <script type="module" src="js/main.js"></script>
