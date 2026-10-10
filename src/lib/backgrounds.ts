@@ -1,4 +1,4 @@
-import type { BackgroundId } from "./state.js";
+import type { BackgroundId } from "./material.js";
 
 /* fondos (SVG en data URI, con bordes nítidos para que el blur se note) */
 const SVG_OPEN =
