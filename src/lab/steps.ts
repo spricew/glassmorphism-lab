@@ -1,103 +1,31 @@
-import { $, $$, SUPPORTS_SQ } from "../lib/utils.js";
-import { styleGL } from "../lib/glass.js";
-import type { Effect } from "../lib/glass.js";
+import { $, $$ } from "../lib/utils.js";
+import type { Effect, Material } from "../lib/material.js";
 import { panelHTML, shell } from "./panels.js";
 
-/* ---------- construcción paso a paso ---------- */
-const BASE: Effect = {
-  blur: 24,
-  sat: 100,
-  tint: 0,
-  noise: 0,
-  hair: false,
-  hl: false,
-  shadow: false,
-  sq: false,
-  vib: false,
-  radius: 22,
-};
-function step(o: Partial<Effect>): Effect {
-  return Object.assign({}, BASE, o);
-}
-const FILL: Partial<Effect> = { sat: 180, tint: 56, noise: 14 };
-const EDGED: Partial<Effect> = { ...FILL, hair: true, hl: true };
-const FRAMED: Partial<Effect> = { ...EDGED, shadow: true, sq: SUPPORTS_SQ };
-
-interface StepDef {
-  t: string;
-  d: string;
-  p: Effect;
-}
-const STEPS: StepDef[] = [
-  {
-    t: "Original",
-    d: "Sin material. El texto compite con el fondo y casi no se lee.",
-    p: step({ blur: 0 }),
-  },
-  {
-    t: "Desenfoque",
-    d: "Gaussiano de 24 px. Quita el detalle, pero el resultado queda gris y lavado.",
-    p: step({}),
-  },
-  {
-    t: "Saturación 180 %",
-    d: "El blur mezcla colores vecinos y los desatura. Subir la saturación devuelve la vida.",
-    p: step({ sat: 180 }),
-  },
-  {
-    t: "Tinte",
-    d: "Una capa clara (u oscura) fija el contraste base y hace legible el texto.",
-    p: step({ sat: 180, tint: 56 }),
-  },
-  {
-    t: "Grano",
-    d: "Ruido fino que rompe el banding de los degradados difuminados.",
-    p: step(FILL),
-  },
-  {
-    t: "Borde y brillo",
-    d: "Hairline de 0,5 px y una línea de luz en el canto superior.",
-    p: step(EDGED),
-  },
-  {
-    t: "Sombra y esquinas",
-    d: "Sombra en dos capas y esquinas continuas en lugar de arco circular.",
-    p: step(FRAMED),
-  },
-  {
-    t: "Vibrancy",
-    d: "El texto se mezcla con el fondo (multiply en claro, plus-lighter en oscuro) y toma su color.",
-    p: step({ ...FRAMED, vib: true }),
-  },
-];
-
-const stepsEl = $<HTMLElement>("#steps");
-
-export function buildSteps(): void {
-  stepsEl.innerHTML = STEPS.map(function (s, i) {
-    return (
-      `<article class="step"><div class="mini" data-i="${i}" aria-hidden="true"><div class="gl">` +
-      shell(
-        panelHTML(
-          "Panel",
-          "iOS 7 → 18",
-          [
-            ["Desenfoque", "24 px"],
-            ["Saturación", "180 %"],
-          ],
-          "",
-        ),
-      ) +
-      "</div></div>" +
-      `<div><h3><span>${i}</span>${s.t}</h3><p>${s.d}</p></div></article>`
-    );
-  }).join("");
+export function buildSteps<E extends Effect>(mat: Material<E>): void {
+  const stepsEl = $<HTMLElement>("#steps");
+  stepsEl.innerHTML = mat.steps
+    .map(function (s, i) {
+      return (
+        `<article class="step"><div class="mini" data-i="${i}" aria-hidden="true"><div class="gl">` +
+        shell(
+          panelHTML(mat.mini.title, mat.mini.sub, mat.mini.rows, mat.mini.foot),
+        ) +
+        "</div></div>" +
+        `<div><h3><span>${i}</span>${s.t}</h3><p>${s.d}</p></div></article>`
+      );
+    })
+    .join("");
 }
 
-export function styleSteps(dark: boolean): void {
+export function styleSteps<E extends Effect>(
+  mat: Material<E>,
+  dark: boolean,
+): void {
+  const stepsEl = $<HTMLElement>("#steps");
   $$<HTMLElement>(".mini", stepsEl).forEach(function (m) {
     const i = Number(m.dataset.i ?? 0);
     const g = $<HTMLElement>(".gl", m);
-    styleGL(g, STEPS[i].p, dark, false);
+    mat.apply(g, mat.steps[i].p, dark, false);
   });
 }

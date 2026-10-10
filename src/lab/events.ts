@@ -1,31 +1,31 @@
 import { $, $$ } from "../lib/utils.js";
-import { state, MATERIALS, MATERIAL_KEYS } from "../lib/state.js";
 import type {
-  MaterialId,
-  SegKey,
+  AppState,
   BackgroundId,
-  MaterialView,
-  SliderLayerId,
-} from "../lib/state.js";
+  Effect,
+  Material,
+  SegKey,
+} from "../lib/material.js";
 import { render } from "./render.js";
 
-export function bindEvents(): void {
+export function bindEvents<E extends Effect>(mat: Material<E>): void {
+  const state = mat.state;
   const insp = $<HTMLElement>(".inspector");
   insp.addEventListener("input", function (e) {
     const t = e.target as HTMLElement;
-    const k = t.dataset.rg as SliderLayerId | undefined;
+    const k = t.dataset.rg;
     if (k) {
       state.layers[k].v = +((t as HTMLInputElement).value);
-      if (MATERIAL_KEYS.includes(k)) state.material = "custom";
+      if (mat.presetKeys.includes(k)) state.presetId = "custom";
     } else if (t.dataset.on) {
-      const key = t.dataset.on as keyof typeof state.layers;
+      const key = t.dataset.on;
       const cb = t as HTMLInputElement;
       state.layers[key].on = cb.checked;
-      if (MATERIAL_KEYS.includes(key as SliderLayerId)) state.material = "custom";
+      if (mat.presetKeys.includes(key)) state.presetId = "custom";
     } else if (t.id === "rg-radius") {
       state.radius = +((t as HTMLInputElement).value);
     }
-    render();
+    render(mat);
   });
 
   document.addEventListener("click", function (e) {
@@ -33,22 +33,22 @@ export function bindEvents(): void {
     if (!b) return;
     const key = (b.parentElement as HTMLElement).dataset.seg as SegKey;
     const v = b.dataset.v;
+    if (!v) return;
     if (key === "material") {
-      const m = MATERIALS[v as MaterialId];
-      state.material = v as MaterialId;
-      state.view = "full";
-      state.layers.blur.v = m.blur;
-      state.layers.sat.v = m.sat;
-      state.layers.tint.v = m.tint;
-      state.layers.blur.on = state.layers.sat.on = state.layers.tint.on = true;
+      const preset = mat.presets.find(function (p) {
+        return p.id === v;
+      });
+      if (!preset) return;
+      state.presetId = preset.id;
+      preset.apply(state);
     } else if (key === "mode") {
-      state.mode = v as "light" | "dark";
+      state.mode = v as AppState["mode"];
     } else if (key === "bg") {
       state.bg = v as BackgroundId;
     } else if (key === "view") {
-      state.view = v as MaterialView;
+      state.view = v as AppState["view"];
     }
-    render();
+    render(mat);
   });
 
   /* navegación por teclado dentro de los grupos de selección */
@@ -58,7 +58,7 @@ export function bindEvents(): void {
     const b = target.closest<HTMLButtonElement>('.seg button[role="radio"]');
     if (!b) return;
     const seg = b.parentElement as HTMLElement;
-    const btns = $$('button[role="radio"]', seg);
+    const btns = $$<HTMLButtonElement>('button[role="radio"]', seg);
     const i = btns.indexOf(b);
     let next = i;
     if (e.key === "ArrowRight" || e.key === "ArrowDown")
@@ -77,19 +77,19 @@ export function bindEvents(): void {
   const animate = $<HTMLInputElement>("#animate");
   animate.addEventListener("change", function (e) {
     state.animate = (e.target as HTMLInputElement).checked;
-    render();
+    render(mat);
   });
   const showbar = $<HTMLInputElement>("#showbar");
   showbar.addEventListener("change", function (e) {
     state.bar = (e.target as HTMLInputElement).checked;
-    render();
+    render(mat);
   });
 
   const hold = $<HTMLButtonElement>("#hold");
   function setHold(v: boolean): void {
     if (state.hold !== v) {
       state.hold = v;
-      render();
+      render(mat);
     }
   }
   hold.addEventListener("pointerdown", function (e: PointerEvent) {

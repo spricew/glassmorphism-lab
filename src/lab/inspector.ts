@@ -1,19 +1,16 @@
 import { $, SUPPORTS_SQ } from "../lib/utils.js";
-import { UI } from "../lib/state.js";
-import type { SliderUI, LayerUI } from "../lib/state.js";
+import type { Effect, LayerUI, Material } from "../lib/material.js";
 
 function layerRow(L: LayerUI): string {
-  const isSlider = "min" in L;
+  const isSlider = L.min !== undefined;
   let h =
     `<div class="layer" data-k="${L.k}" data-on="true"><div class="lh"><label class="sw"><input type="checkbox" role="switch" data-on="${L.k}" id="on-${L.k}" checked><span class="trk" aria-hidden="true"></span><span class="nm">${L.name}</span></label>` +
     (isSlider ? `<output class="val" id="val-${L.k}"></output>` : "") +
     "</div>";
   if (isSlider) {
-    const S = L as SliderUI;
-    h +=
-      `<input type="range" id="rg-${S.k}" data-rg="${S.k}" min="${S.min}" max="${S.max}" step="${S.step}" aria-label="${S.name}">`;
+    h += `<input type="range" id="rg-${L.k}" data-rg="${L.k}" min="${L.min}" max="${L.max}" step="${L.step}" aria-label="${L.name}">`;
   }
-  if ("radius" in L && L.radius)
+  if (L.radius)
     h +=
       '<div class="lh" style="margin-top:2px"><span class="nm" style="font-size:13px;font-weight:500">Radio de esquina</span><output class="val" id="val-radius"></output></div><input type="range" id="rg-radius" min="0" max="48" step="1" aria-label="Radio de esquina">';
   h +=
@@ -25,13 +22,13 @@ function layerRow(L: LayerUI): string {
   return h;
 }
 
-export function buildInspector(): void {
-  (Object.keys(UI) as Array<keyof typeof UI>).forEach(function (g) {
-    const el = $<HTMLElement>("#" + g);
-    el.insertAdjacentHTML("beforeend", UI[g].map(layerRow).join(""));
+export function buildInspector<E extends Effect>(mat: Material<E>): void {
+  mat.inspectorGroups.forEach(function (g) {
+    const el = $<HTMLElement>("#" + g.id);
+    el.insertAdjacentHTML("beforeend", g.items.map(layerRow).join(""));
   });
   if (!SUPPORTS_SQ) {
-    const onSq = $<HTMLInputElement>("#on-sq");
-    onSq.disabled = true;
+    const onSq = document.querySelector<HTMLInputElement>("#on-sq");
+    if (onSq) onSq.disabled = true;
   }
 }

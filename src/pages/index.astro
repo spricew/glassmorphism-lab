@@ -1,5 +1,6 @@
 ---
-import "../styles/global.css";
+import "../styles/base.css";
+import "../styles/frosted.css";
 ---
 <!doctype html>
 <html lang="es">
@@ -289,7 +290,9 @@ import "../styles/global.css";
     </div>
 
     <script>
-      import "../lab/main.ts";
+      import { initLab } from "../lab/main.ts";
+      import { frosted } from "../lib/frosted/index.ts";
+      initLab(frosted);
     </script>
   </body>
 </html>
