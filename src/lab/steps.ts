@@ -1,9 +1,10 @@
-import { $, $$, SUPPORTS_SQ } from "./utils.js";
-import { styleGL } from "./glass.js";
+import { $, $$, SUPPORTS_SQ } from "../lib/utils.js";
+import { styleGL } from "../lib/glass.js";
+import type { Effect } from "../lib/glass.js";
 import { panelHTML, shell } from "./panels.js";
 
 /* ---------- construcción paso a paso ---------- */
-var BASE = {
+const BASE: Effect = {
   blur: 24,
   sat: 100,
   tint: 0,
@@ -15,13 +16,19 @@ var BASE = {
   vib: false,
   radius: 22,
 };
-function step(o) {
+function step(o: Partial<Effect>): Effect {
   return Object.assign({}, BASE, o);
 }
-var FILL = { sat: 180, tint: 56, noise: 14 };
-var EDGED = { ...FILL, hair: true, hl: true };
-var FRAMED = { ...EDGED, shadow: true, sq: SUPPORTS_SQ };
-var STEPS = [
+const FILL: Partial<Effect> = { sat: 180, tint: 56, noise: 14 };
+const EDGED: Partial<Effect> = { ...FILL, hair: true, hl: true };
+const FRAMED: Partial<Effect> = { ...EDGED, shadow: true, sq: SUPPORTS_SQ };
+
+interface StepDef {
+  t: string;
+  d: string;
+  p: Effect;
+}
+const STEPS: StepDef[] = [
   {
     t: "Original",
     d: "Sin material. El texto compite con el fondo y casi no se lee.",
@@ -63,8 +70,10 @@ var STEPS = [
     p: step({ ...FRAMED, vib: true }),
   },
 ];
-var stepsEl = $("#steps");
-export function buildSteps() {
+
+const stepsEl = $<HTMLElement>("#steps");
+
+export function buildSteps(): void {
   stepsEl.innerHTML = STEPS.map(function (s, i) {
     return (
       `<article class="step"><div class="mini" data-i="${i}" aria-hidden="true"><div class="gl">` +
@@ -84,10 +93,11 @@ export function buildSteps() {
     );
   }).join("");
 }
-export function styleSteps(dark) {
-  $$(".mini", stepsEl).forEach(function (m) {
-    var i = +m.dataset.i,
-      g = $(".gl", m);
+
+export function styleSteps(dark: boolean): void {
+  $$<HTMLElement>(".mini", stepsEl).forEach(function (m) {
+    const i = Number(m.dataset.i ?? 0);
+    const g = $<HTMLElement>(".gl", m);
     styleGL(g, STEPS[i].p, dark, false);
   });
 }

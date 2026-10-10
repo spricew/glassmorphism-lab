@@ -1,4 +1,4 @@
-import { initNoise } from "./utils.js";
+import { initNoise } from "../lib/utils.js";
 import { buildInspector } from "./inspector.js";
 import { initPanels } from "./panels.js";
 import { buildSteps } from "./steps.js";

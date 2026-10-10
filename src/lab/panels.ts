@@ -1,8 +1,14 @@
-import { $ } from "./utils.js";
+import { $ } from "../lib/utils.js";
 
-var GLYPH =
+const GLYPH =
   '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M12 3 3 8l9 5 9-5-9-5Z"/><path d="m3 12 9 5 9-5"/><path d="m3 16 9 5 9-5"/></svg>';
-export function panelHTML(title, sub, rows, foot) {
+
+export function panelHTML(
+  title: string,
+  sub: string,
+  rows: Array<[string, string]>,
+  foot: string,
+): string {
   return (
     `<div class="gc-head l1">${GLYPH}<div><div class="gc-title l1">${title}</div><div class="gc-sub l2">${sub}</div></div></div>` +
     '<div class="gc-rows">' +
@@ -15,12 +21,14 @@ export function panelHTML(title, sub, rows, foot) {
     (foot ? '<div class="gc-foot l3">' + foot + "</div>" : "")
   );
 }
-export function shell(inner) {
+
+export function shell(inner: string): string {
   return '<div class="gl-surface"></div><div class="gl-content">' + inner + "</div>";
 }
-var TAB =
+
+const TAB =
   '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
-var TABS = [
+const TABS: Array<[string, string, string]> = [
   [
     " on",
     '<rect x="3.5" y="5" width="17" height="14" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17 5-4 4 3 3-2 4 3"/>',
@@ -34,7 +42,8 @@ var TABS = [
     "Ajustes",
   ],
 ];
-export function initPanels() {
+
+export function initPanels(): void {
   $("#bar").innerHTML = shell(
     TABS.map(function (t) {
       return `<div class="tab${t[0]}">${TAB}${t[1]}</svg><span>${t[2]}</span></div>`;
