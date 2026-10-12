@@ -8,11 +8,11 @@ export const $$ = <T extends Element = HTMLElement>(
   root: Document | ParentNode = document,
 ): T[] => Array.from(root.querySelectorAll<T>(selector));
 
-export const SUPPORTS_SQ = !!(
-  window.CSS &&
-  CSS.supports &&
-  CSS.supports("corner-shape", "squircle")
-);
+export const SUPPORTS_SQ =
+  typeof window !== "undefined" &&
+  !!window.CSS &&
+  !!window.CSS.supports &&
+  window.CSS.supports("corner-shape", "squircle");
 
 export const REDUCE =
   typeof window !== "undefined" &&

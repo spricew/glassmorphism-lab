@@ -1,6 +1,117 @@
 ---
 import "../styles/base.css";
 import "../styles/frosted.css";
+import { frosted } from "../lib/frosted/index.ts";
+import { panelHTML, shell } from "../lab/panels.ts";
+
+const base = import.meta.env.BASE_URL;
+const canonical = Astro.url.href;
+const abs = (file: string) =>
+  new URL(base + file, Astro.site ?? Astro.url).href;
+
+const title = "Glassmorphism Lab — desglose del backdrop-filter de iOS";
+const description =
+  "Laboratorio del vidrio esmerilado (frosted glass) de iOS: apila backdrop-filter, saturación, tinte, borde y brillo capa por capa y mira cómo cambia cada paso.";
+const ogImage = abs("og-image.webp");
+const imageAlt =
+  "Panel de vidrio esmerilado de Glassmorphism Lab sobre un fondo de mosaico con formas y colores vivos.";
+
+const faq = [
+  {
+    q: "¿Qué es el glassmorphism?",
+    a: "Es un estilo de interfaz que imita el vidrio esmerilado: paneles translúcidos que difuminan lo que hay detrás, con un tinte sutil, un borde fino y un brillo interior. Apple lo popularizó en iOS 7 y sigue presente en iOS 18, macOS y visionOS.",
+  },
+  {
+    q: "¿Cómo se hace el efecto de vidrio esmerilado en CSS?",
+    a: "Con la propiedad backdrop-filter. La receta mínima es backdrop-filter: blur(24px) saturate(180%) más un fondo translúcido con background-color en rgba para el tinte, y un borde de 0,5 px con un brillo interior para definir el canto del panel.",
+  },
+  {
+    q: "¿Qué navegadores soportan backdrop-filter?",
+    a: "Todos los navegadores modernos: Chrome, Edge, Safari (con el prefijo -webkit-) y Firefox. En navegadores antiguos el panel se muestra sin desenfoque, así que conviene garantizar el contraste del texto con el tinte por si el filtro no se aplica.",
+  },
+  {
+    q: "¿Por qué mi backdrop-filter no se ve?",
+    a: "Casi siempre por el contexto de apilamiento. Si un ancestro tiene transform, opacity menor que 1, filter o z-index, Chromium trata ese elemento como raíz del fondo y el blur deja de ver lo que hay detrás. Evita esos valores en la cadena de ancestros del panel.",
+  },
+];
+
+const ld = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${canonical}#website`,
+      url: canonical,
+      name: "Glassmorphism Lab",
+      inLanguage: "es",
+      publisher: { "@id": `${canonical}#author` },
+      about: { "@id": `${canonical}#app` },
+    },
+    {
+      "@type": "Person",
+      "@id": `${canonical}#author`,
+      name: "spricew",
+      url: "https://github.com/spricew",
+      sameAs: ["https://github.com/spricew/glassmorphism-lab"],
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": `${canonical}#app`,
+      name: "Glassmorphism Lab",
+      url: canonical,
+      image: ogImage,
+      screenshot: ogImage,
+      applicationCategory: "DeveloperApplication",
+      operatingSystem: "Web",
+      browserRequirements: "Requiere JavaScript",
+      inLanguage: "es",
+      author: { "@id": `${canonical}#author` },
+      description:
+        "Glassmorphism Lab es un laboratorio interactivo para desglosar el vidrio esmerilado (frosted glass) de iOS capa por capa: backdrop-filter, saturación, tinte, borde y brillo.",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+    },
+    {
+      "@type": "HowTo",
+      "@id": `${canonical}#howto`,
+      name: "Cómo recrear el vidrio esmerilado de iOS con CSS",
+      inLanguage: "es",
+      description:
+        "Reconstruye el material translúcido de iOS apilando capas de CSS y ajustando cada una hasta obtener el efecto deseado.",
+      step: [
+        {
+          "@type": "HowToStep",
+          name: "Aplica el desenfoque",
+          text: "Usa backdrop-filter: blur() para difuminar lo que hay detrás del panel.",
+        },
+        {
+          "@type": "HowToStep",
+          name: "Añade saturación",
+          text: "Combinar blur() con saturate() evita que el color de fondo se vuelva gris apagado.",
+        },
+        {
+          "@type": "HowToStep",
+          name: "Aplica el tinte",
+          text: "Añade un relleno translúcido con background-color en rgba para garantizar el contraste del texto.",
+        },
+        {
+          "@type": "HowToStep",
+          name: "Remata con borde y brillo",
+          text: "Un borde sutil y un brillo interior definen el canto del panel para que se lea como un objeto.",
+        },
+      ],
+    },
+    {
+      "@type": "FAQPage",
+      "@id": `${canonical}#faq`,
+      inLanguage: "es",
+      mainEntity: faq.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
+  ],
+};
 ---
 <!doctype html>
 <html lang="es">
@@ -10,53 +121,36 @@ import "../styles/frosted.css";
       name="viewport"
       content="width=device-width,initial-scale=1,viewport-fit=cover"
     />
-    <title>Glassmorphism Lab — desglose del backdrop-filter de iOS</title>
-    <meta
-      name="description"
-      content="Glassmorphism Lab: laboratorio interactivo del vidrio esmerilado (frosted glass) de iOS. Apila backdrop-filter, saturación, tinte, borde y brillo capa por capa y observa cómo cambia el material."
-    />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content="spricew" />
     <meta name="robots" content="index, follow" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Glassmorphism Lab" />
     <meta property="og:locale" content="es_ES" />
-    <meta
-      property="og:title"
-      content="Glassmorphism Lab — desglose del backdrop-filter de iOS"
-    />
-    <meta
-      property="og:description"
-      content="Laboratorio interactivo del vidrio esmerilado (frosted glass) de iOS. Apila backdrop-filter, saturación, tinte, borde y brillo capa por capa y observa cómo cambia el material."
-    />
-    <meta property="og:url" content="https://spricew.github.io/glassmorphism-lab/" />
-    <meta
-      property="og:image"
-      content="https://spricew.github.io/glassmorphism-lab/og-image.webp"
-    />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
     <meta property="og:image:type" content="image/webp" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta
-      property="og:image:alt"
-      content="Panel de vidrio esmerilado de Glassmorphism Lab sobre un fondo de mosaico con formas y colores vivos."
-    />
+    <meta property="og:image:alt" content={imageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:title"
-      content="Glassmorphism Lab — desglose del backdrop-filter de iOS"
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={imageAlt} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <link
+      rel="icon"
+      href={`${base}favicon-32.png`}
+      sizes="32x32"
+      type="image/png"
     />
-    <meta
-      name="twitter:description"
-      content="Laboratorio interactivo del vidrio esmerilado (frosted glass) de iOS, capa por capa: backdrop-filter, saturación, tinte, borde y brillo."
-    />
-    <meta
-      name="twitter:image"
-      content="https://spricew.github.io/glassmorphism-lab/og-image.webp"
-    />
-    <meta
-      name="twitter:image:alt"
-      content="Panel de vidrio esmerilado de Glassmorphism Lab sobre un fondo de mosaico con formas y colores vivos."
-    />
-    <link rel="canonical" href="https://spricew.github.io/glassmorphism-lab/" />
+    <link rel="apple-touch-icon" href={`${base}apple-touch-icon.png`} />
+    <link rel="manifest" href={`${base}site.webmanifest`} />
     <meta
       name="theme-color"
       content="#f3f4f7"
@@ -73,58 +167,7 @@ import "../styles/frosted.css";
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap"
     />
-    <script is:inline type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@graph": [
-          {
-            "@type": "SoftwareApplication",
-            "@id": "https://spricew.github.io/glassmorphism-lab/#app",
-            "name": "Glassmorphism Lab",
-            "url": "https://spricew.github.io/glassmorphism-lab/",
-            "applicationCategory": "DeveloperApplication",
-            "operatingSystem": "Web",
-            "browserRequirements": "Requiere JavaScript",
-            "inLanguage": "es",
-            "description": "Glassmorphism Lab es un laboratorio interactivo para desglosar el vidrio esmerilado (frosted glass) de iOS capa por capa: backdrop-filter, saturación, tinte, borde y brillo.",
-            "offers": {
-              "@type": "Offer",
-              "price": "0",
-              "priceCurrency": "EUR"
-            }
-          },
-          {
-            "@type": "HowTo",
-            "@id": "https://spricew.github.io/glassmorphism-lab/#howto",
-            "name": "Cómo recrear el vidrio esmerilado de iOS con CSS",
-            "inLanguage": "es",
-            "description": "Reconstruye el material translúcido de iOS apilando capas de CSS y ajustando cada una hasta obtener el efecto deseado.",
-            "step": [
-              {
-                "@type": "HowToStep",
-                "name": "Aplica el desenfoque",
-                "text": "Usa backdrop-filter: blur() para difuminar lo que hay detrás del panel."
-              },
-              {
-                "@type": "HowToStep",
-                "name": "Añade saturación",
-                "text": "Combinar blur() con saturate() evita que el color de fondo se vuelva gris apagado."
-              },
-              {
-                "@type": "HowToStep",
-                "name": "Aplica el tinte",
-                "text": "Añade un relleno translúcido con background-color en rgba para garantizar el contraste del texto."
-              },
-              {
-                "@type": "HowToStep",
-                "name": "Remata con borde y brillo",
-                "text": "Un borde sutil y un brillo interior definen el canto del panel para que se lea como un objeto."
-              }
-            ]
-          }
-        ]
-      }
-    </script>
+    <script type="application/ld+json" set:html={JSON.stringify(ld)} />
   </head>
   <body>
     <a class="skip-link" href="#main">Saltar al contenido</a>
@@ -281,7 +324,34 @@ import "../styles/frosted.css";
             según lo que hay detrás.
           </p>
         </div>
-        <div class="steps" id="steps"></div>
+        <div class="steps" id="steps">
+          {
+            frosted.steps.map((s, i) => (
+              <article class="step">
+                <div class="mini" data-i={i} aria-hidden="true">
+                  <div
+                    class="gl"
+                    set:html={shell(
+                      panelHTML(
+                        frosted.mini.title,
+                        frosted.mini.sub,
+                        frosted.mini.rows,
+                        frosted.mini.foot,
+                      ),
+                    )}
+                  />
+                </div>
+                <div>
+                  <h3>
+                    <span>{i}</span>
+                    {s.t}
+                  </h3>
+                  <p>{s.d}</p>
+                </div>
+              </article>
+            ))
+          }
+        </div>
       </section>
 
       <section class="build" aria-labelledby="hTry">
@@ -319,11 +389,27 @@ import "../styles/frosted.css";
         <p class="foot">
           Los grosores son aproximaciones calibradas a ojo, no los valores
           internos del sistema. La referencia pública más cercana es el sample
-          code <code>UIImageEffects</code>, que usa saturación 1,8 y un tinte de
-          alfa entre 0,3 y 0,82 según el estilo. El radio de
-          <code>blur()</code> en CSS es una desviación estándar, así que no
-          equivale 1 a 1 al radio de esas funciones.
+          code <a href="https://developer.apple.com/library/archive/samplecode/UIImageEffects/Introduction/Intro.html" rel="noopener noreferrer">UIImageEffects</a>,
+          que usa saturación 1,8 y un tinte de alfa entre 0,3 y 0,82 según el
+          estilo. El radio de
+          <a href="https://developer.mozilla.org/es/docs/Web/CSS/backdrop-filter" rel="noopener noreferrer"> <code>blur()</code> </a>
+          en CSS es una desviación estándar, así que no equivale 1 a 1 al radio
+          de esas funciones.
         </p>
+      </section>
+
+      <section class="build" aria-labelledby="hFaq">
+        <h2 id="hFaq">Preguntas frecuentes</h2>
+        <div class="faq">
+          {
+            faq.map((f) => (
+              <details class="faq-item">
+                <summary>{f.q}</summary>
+                <p>{f.a}</p>
+              </details>
+            ))
+          }
+        </div>
       </section>
       </main>
     </div>
