@@ -3,6 +3,8 @@ import "../styles/base.css";
 import "../styles/frosted.css";
 import { frosted } from "../lib/frosted/index.ts";
 import { panelHTML, shell } from "../lab/panels.ts";
+import geistLatin from "../fonts/geist-latin.woff2?url";
+import geistMonoLatin from "../fonts/geist-mono-latin.woff2?url";
 
 const base = import.meta.env.BASE_URL;
 const canonical = Astro.url.href;
@@ -161,11 +163,19 @@ const ld = {
       content="#0c0e12"
       media="(prefers-color-scheme: dark)"
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap"
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href={geistLatin}
+      crossorigin
+    />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href={geistMonoLatin}
+      crossorigin
     />
     <script type="application/ld+json" set:html={JSON.stringify(ld)} />
   </head>
