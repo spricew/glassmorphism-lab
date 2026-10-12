@@ -13,12 +13,6 @@ html {
 body {
   margin: 0;
   padding: 0;
-  font:
-    14px -apple-system,
-    BlinkMacSystemFont,
-    sans-serif;
-  background: #fff;
-  color: #000;
 }
 img {
   max-width: 100%;
@@ -43,6 +37,7 @@ img {
   --code-k: #0a58cf;
   --code-c: #7a8394;
   --code-s: #a4326b;
+  --sh-hue: 16, 24, 48;
   --font: "Geist", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --mono:
     "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -64,6 +59,7 @@ img {
     --code-k: #7db4ff;
     --code-c: #6c7588;
     --code-s: #f08cb6;
+    --sh-hue: 0, 0, 0;
     color-scheme: dark;
   }
 }
@@ -83,6 +79,7 @@ img {
   --code-k: #7db4ff;
   --code-c: #6c7588;
   --code-s: #f08cb6;
+  --sh-hue: 0, 0, 0;
   color-scheme: dark;
 }
 * {
@@ -124,7 +121,7 @@ main:focus {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 10px 30px rgba(var(--sh-hue), 0.28);
   text-decoration: none;
   transition: transform 0.15s;
 }
@@ -257,9 +254,16 @@ h2 {
   cursor: pointer;
   touch-action: none;
   user-select: none;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    transform 0.08s;
 }
 .chip.hold:hover {
   background: rgba(14, 16, 22, 0.9);
+}
+.chip.hold:active {
+  transform: translateY(1px);
 }
 .chip.hold[aria-pressed="true"] {
   background: var(--accent);
@@ -352,15 +356,23 @@ h2 {
   color: var(--muted);
   border-radius: 8px;
   cursor: pointer;
+  transition:
+    color 0.15s,
+    background 0.15s,
+    box-shadow 0.15s,
+    transform 0.08s;
 }
 .seg button:hover {
   color: var(--fg);
+}
+.seg button:active {
+  transform: translateY(1px);
 }
 .seg button[aria-checked="true"] {
   background: var(--seg-on);
   color: var(--fg);
   box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.14),
+    0 1px 2px rgba(var(--sh-hue), 0.16),
     0 0 0 0.5px var(--line);
 }
 .seg button:focus-visible {
@@ -433,7 +445,7 @@ h2 {
   height: 16px;
   border-radius: 50%;
   background: #fff;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 2px rgba(var(--sh-hue), 0.32);
   transition: transform 0.15s;
 }
 .sw input:checked + .trk {
@@ -481,15 +493,22 @@ hr {
 }
 .btn {
   font: 500 13px/1 var(--font);
-  padding: 9px 14px;
+  padding: .9rem 1rem;
   border-radius: 9px;
   border: 1px solid var(--line);
   background: var(--surface);
   color: var(--fg);
   cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    transform 0.08s;
 }
 .btn:hover {
   border-color: var(--muted);
+}
+.btn:active {
+  transform: translateY(1px);
 }
 .btn:focus-visible {
   outline: 2px solid var(--accent);
@@ -618,12 +637,20 @@ a {
   border-radius: 14px;
   padding: 14px 18px;
   background: var(--surface);
+  transition: border-color 0.15s;
+}
+.faq-item:hover {
+  border-color: var(--muted);
 }
 .faq-item summary {
   cursor: pointer;
   font-weight: 600;
   font-size: 15px;
   list-style: none;
+  transition: color 0.15s;
+}
+.faq-item:hover summary {
+  color: var(--accent);
 }
 .faq-item summary::-webkit-details-marker {
   display: none;
@@ -647,9 +674,6 @@ a {
 @media (max-width: 1040px) {
   .lab {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "stage" "inspector" "code";
-  }
-  .lab {
     grid-template-areas: "stage" "foot" "inspector" "code";
   }
   .stagecol {
@@ -709,8 +733,18 @@ a {
   }
   .trk,
   .trk::after,
-  .skip-link {
+  .skip-link,
+  .btn,
+  .seg button,
+  .chip.hold,
+  .faq-item,
+  .faq-item summary {
     transition: none;
+  }
+  .btn:active,
+  .seg button:active,
+  .chip.hold:active {
+    transform: none;
   }
 }
 
