@@ -245,6 +245,8 @@ h2 {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 340px;
   grid-template-areas: "stage inspector" "code inspector";
+  /* el sobrante de altura va a la fila del código, así queda pegado bajo el stage */
+  grid-template-rows: auto 1fr;
   gap: 20px;
   align-items: start;
 }
@@ -759,6 +761,7 @@ a {
   .lab {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas: "stage" "foot" "inspector" "code";
+    grid-template-rows: none;
   }
   .stagecol {
     display: contents;
