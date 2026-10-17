@@ -181,6 +181,7 @@ const ld = {
   </head>
   <body>
     <a class="skip-link" href="#main">Saltar al contenido</a>
+    <div class="ambient" aria-hidden="true"></div>
     <div class="wrap">
       <header>
         <p class="eyebrow">Material translúcido clásico · iOS 7 a iOS 18</p>
@@ -245,7 +246,7 @@ const ld = {
           </div>
         </div>
 
-        <aside class="inspector" aria-label="Capas del material">
+        <aside class="inspector glasspane" aria-label="Capas del material">
           <div class="group">
             <span class="eyebrow">Apariencia</span>
             <div
@@ -313,7 +314,7 @@ const ld = {
           <div class="group" id="gText"><span class="eyebrow">Texto</span></div>
         </aside>
 
-        <div class="codebox">
+        <div class="codebox glasspane">
           <div class="codehead">
             <span class="eyebrow">CSS resultante</span>
             <button class="btn" id="copy" type="button" aria-describedby="copyStatus">
@@ -413,7 +414,7 @@ const ld = {
         <div class="faq">
           {
             faq.map((f) => (
-              <details class="faq-item">
+              <details class="faq-item glasspane">
                 <summary>{f.q}</summary>
                 <p>{f.a}</p>
               </details>
