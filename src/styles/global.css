@@ -970,7 +970,7 @@ a {
   @keyframes rise-stagger {
     from {
       opacity: 0;
-      translate: 0 12px;
+      translate: 0 18px;
     }
   }
   .sitebar {
@@ -999,9 +999,9 @@ a {
   #hTry,
   #hFaq {
     opacity: 0;
-    animation: rise-stagger 0.6s var(--ease-out) both;
+    animation: rise-stagger 0.8s var(--ease-out) both;
     animation-timeline: view();
-    animation-range: entry 8% cover 18%;
+    animation-range: entry 6% cover 16%;
   }
   /* la pastilla seleccionada del segmentado aparece con un pulso corto */
   @keyframes seg-on {
