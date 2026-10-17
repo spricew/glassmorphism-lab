@@ -260,6 +260,8 @@ h2 {
 }
 .inspector {
   grid-area: inspector;
+  /* ocupa toda la altura del área que comparte con stage + código */
+  align-self: stretch;
   border-radius: 16px;
   padding: 18px;
   display: flex;
