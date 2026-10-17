@@ -6,6 +6,8 @@
   box-sizing: border-box;
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
+  /* permite animar block-size entre 0 y auto (acordeón del FAQ) */
+  interpolate-size: allow-keywords;
 }
 html {
   scroll-padding-top: env(safe-area-inset-top, 0px);
@@ -46,6 +48,9 @@ img {
   --font: "Geist", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --mono:
     "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* movimiento: desaceleración tipo iOS y un rebote corto para los iconos */
+  --ease-out: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -233,9 +238,10 @@ main:focus {
     inset 0 1px 0 0 var(--glass-hilite),
     inset 0 0 0 1px var(--glass-edge);
   transition:
-    color 0.2s,
-    background 0.2s,
-    box-shadow 0.2s;
+    color 0.2s var(--ease-out),
+    background 0.2s var(--ease-out),
+    box-shadow 0.2s var(--ease-out),
+    scale 0.18s var(--ease-out);
 }
 .sitebar-gh:hover,
 .sitefoot-gh:hover {
@@ -267,9 +273,10 @@ main:focus {
     inset 0 1px 0 0 var(--glass-hilite),
     inset 0 0 0 1px var(--glass-edge);
   transition:
-    color 0.2s,
-    background 0.2s,
-    box-shadow 0.2s;
+    color 0.2s var(--ease-out),
+    background 0.2s var(--ease-out),
+    box-shadow 0.2s var(--ease-out),
+    scale 0.18s var(--ease-out);
 }
 .sitebar-lang > svg {
   flex: none;
@@ -288,6 +295,12 @@ main:focus {
 .sitebar-lang:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+/* presión: el control se hunde un poco y vuelve con la curva de salida */
+.sitebar-gh:active,
+.sitebar-lang:active,
+.sitefoot-gh:active {
+  scale: 0.94;
 }
 h1,
 h2,
@@ -406,15 +419,15 @@ h2 {
   touch-action: none;
   user-select: none;
   transition:
-    background 0.15s,
-    color 0.15s,
-    transform 0.08s;
+    background 0.15s var(--ease-out),
+    color 0.15s var(--ease-out),
+    scale 0.16s var(--ease-out);
 }
 .chip.hold:hover {
   background: rgba(14, 16, 22, 0.9);
 }
 .chip.hold:active {
-  transform: translateY(1px);
+  scale: 0.96;
 }
 .chip.hold[aria-pressed="true"] {
   background: var(--accent);
@@ -514,16 +527,16 @@ h2 {
   border-radius: 8px;
   cursor: pointer;
   transition:
-    color 0.15s,
-    background 0.15s,
-    box-shadow 0.15s,
-    transform 0.08s;
+    color 0.15s var(--ease-out),
+    background 0.15s var(--ease-out),
+    box-shadow 0.15s var(--ease-out),
+    scale 0.16s var(--ease-out);
 }
 .seg button:hover {
   color: var(--fg);
 }
 .seg button:active {
-  transform: translateY(1px);
+  scale: 0.97;
 }
 .seg button[aria-checked="true"] {
   background: var(--seg-on);
@@ -594,7 +607,7 @@ h2 {
   background: var(--track);
   position: relative;
   flex: none;
-  transition: background 0.15s;
+  transition: background 0.24s var(--ease-out);
 }
 .trk::after {
   content: "";
@@ -606,13 +619,22 @@ h2 {
   border-radius: 50%;
   background: #fff;
   box-shadow: 0 1px 2px rgba(var(--sh-hue), 0.32);
-  transition: transform 0.15s;
+  transition:
+    transform 0.3s var(--ease-out),
+    width 0.2s var(--ease-out);
 }
 .sw input:checked + .trk {
   background: var(--accent);
 }
 .sw input:checked + .trk::after {
   transform: translateX(14px);
+}
+/* al presionar, la perilla se estira como en un UISwitch */
+.sw:active .trk::after {
+  width: 20px;
+}
+.sw:active input:checked + .trk::after {
+  transform: translateX(10px);
 }
 .sw input:focus-visible + .trk {
   outline: 2px solid var(--accent);
@@ -660,15 +682,22 @@ hr {
   color: var(--fg);
   cursor: pointer;
   transition:
-    border-color 0.15s,
-    background 0.15s,
-    transform 0.08s;
+    border-color 0.15s var(--ease-out),
+    color 0.15s var(--ease-out),
+    background 0.15s var(--ease-out),
+    scale 0.16s var(--ease-out);
 }
 .btn:hover {
   border-color: var(--muted);
 }
 .btn:active {
-  transform: translateY(1px);
+  scale: 0.96;
+}
+/* confirmación de copiado: además del texto, cambia el color */
+.btn.done {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
 }
 .btn:focus-visible {
   outline: 2px solid var(--accent);
@@ -794,7 +823,7 @@ a {
 }
 .faq-item {
   border-radius: 14px;
-  transition: border-color 0.15s;
+  transition: border-color 0.18s var(--ease-out);
 }
 .faq-item.glasspane {
   border: 1px solid var(--line);
@@ -817,7 +846,7 @@ a {
   font-size: 15px;
   color: var(--fg);
   list-style: none;
-  transition: color 0.15s;
+  transition: color 0.18s var(--ease-out);
 }
 .faq-q {
   min-width: 0;
@@ -827,6 +856,11 @@ a {
 }
 .faq-item summary::-webkit-details-marker {
   display: none;
+}
+.faq-item summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  border-radius: 12px;
 }
 /* chip de vidrio con una cruz (＋) que gira 45° hasta × al abrir */
 .faq-icon {
@@ -841,11 +875,16 @@ a {
   box-shadow:
     inset 0 1px 0 0 var(--glass-hilite),
     inset 0 0 0 1px var(--glass-edge);
+  scale: 1;
   transition:
-    transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
-    color 0.2s,
-    background 0.2s,
-    box-shadow 0.2s;
+    transform 0.34s var(--ease-spring),
+    scale 0.18s var(--ease-out),
+    color 0.2s var(--ease-out),
+    background 0.2s var(--ease-out),
+    box-shadow 0.2s var(--ease-out);
+}
+.faq-item summary:active .faq-icon {
+  scale: 0.9;
 }
 .faq-item:hover .faq-icon {
   color: var(--accent);
@@ -862,12 +901,31 @@ a {
     inset 0 1px 0 0 var(--glass-hilite),
     inset 0 0 0 1px color-mix(in srgb, var(--accent) 42%, transparent);
 }
+/* despliegue con altura animada: solo donde el navegador soporta ::details-content */
+@supports selector(::details-content) {
+  .faq-item::details-content {
+    block-size: 0;
+    overflow: hidden;
+    transition:
+      block-size 0.34s var(--ease-out),
+      content-visibility 0.34s allow-discrete;
+  }
+  .faq-item[open]::details-content {
+    block-size: auto;
+  }
+}
 .faq-item p {
   margin: 0;
   padding: 0 18px 14px;
   color: var(--muted);
   font-size: 14px;
   line-height: 1.55;
+  opacity: 0;
+  transition: opacity 0.22s var(--ease-out);
+}
+.faq-item[open] p {
+  opacity: 1;
+  transition-delay: 0.08s;
 }
 
 /* ---------- footer ---------- */
@@ -895,6 +953,59 @@ a {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+/* ---------- movimiento ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+  /* entrada de la página: primero el contenido, luego los controles */
+  @keyframes rise {
+    from {
+      opacity: 0;
+      translate: 0 10px;
+    }
+  }
+  .sitebar {
+    animation: rise 0.5s var(--ease-out) both;
+  }
+  header .eyebrow {
+    animation: rise 0.5s var(--ease-out) 40ms both;
+  }
+  .main-title {
+    animation: rise 0.55s var(--ease-out) 80ms both;
+  }
+  header .lede {
+    animation: rise 0.6s var(--ease-out) 120ms both;
+  }
+  .inspector {
+    animation: rise 0.55s var(--ease-out) 160ms both;
+  }
+  .stagefoot {
+    animation: rise 0.5s var(--ease-out) 180ms both;
+  }
+  .codebox {
+    animation: rise 0.55s var(--ease-out) 220ms both;
+  }
+  /* la pastilla seleccionada del segmentado aparece con un pulso corto */
+  @keyframes seg-on {
+    from {
+      transform: scale(0.94);
+    }
+  }
+  .seg button[aria-checked="true"] {
+    animation: seg-on 0.3s var(--ease-out);
+  }
+  /* confirmación de copiado */
+  @keyframes copy-pop {
+    40% {
+      scale: 1.05;
+    }
+  }
+  .btn.done {
+    animation: copy-pop 0.36s var(--ease-spring);
+  }
 }
 
 @media (max-width: 1040px) {
@@ -971,13 +1082,28 @@ a {
   .chip.hold,
   .faq-item,
   .faq-item summary,
-  .faq-icon {
+  .faq-icon,
+  .faq-item p,
+  .faq-item::details-content {
     transition: none;
   }
   .btn:active,
   .seg button:active,
-  .chip.hold:active {
-    transform: none;
+  .chip.hold:active,
+  .sitebar-gh:active,
+  .sitebar-lang:active,
+  .sitefoot-gh:active {
+    scale: none;
+  }
+  .faq-item summary:active .faq-icon {
+    scale: 1;
+  }
+  /* sin estiramiento de la perilla del switch */
+  .sw:active .trk::after {
+    width: 16px;
+  }
+  .sw:active input:checked + .trk::after {
+    transform: translateX(14px);
   }
 }
 
