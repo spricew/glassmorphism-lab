@@ -106,3 +106,19 @@
   width: 82%;
   height: max-content;
 }
+
+/* ---------- preferencias del sistema ---------- */
+/* Menos transparencia: el material que se estudia deja de ser translúcido y
+   pierde el desenfoque. La preferencia del sistema pesa más que la demostración;
+   si se quisiera preservar la demo, bastaría con borrar este bloque. */
+@media (prefers-reduced-transparency: reduce) {
+  .gl-surface {
+    background: var(--surface);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  /* sin fondo translúcido el grano solo ensucia el panel */
+  .gl-surface::after {
+    opacity: 0;
+  }
+}

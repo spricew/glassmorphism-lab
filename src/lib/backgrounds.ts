@@ -1,5 +1,7 @@
 import { currentLang, getDict, type Lang } from "./i18n.js";
 import type { BackgroundId } from "./material.js";
+import lakeBg from "../assets/bg-lake.webp?url";
+import forestBg from "../assets/bg-forest.webp?url";
 
 /* fondos (SVG en data URI, con bordes nítidos para que el blur se note) */
 const SVG_OPEN =
@@ -114,21 +116,21 @@ function feedSVG(lang: Lang): string {
   return SVG_OPEN + "<defs>" + defs + "</defs>" + out + "</svg>";
 }
 
+/* Los SVG vectoriales viajan como data URI: sus bordes nítidos hacen visible el
+   desenfoque. Las fotos son assets reales del build (se cargan solo al elegirlas). */
+function svgUrl(svg: string): string {
+  return 'url("data:image/svg+xml;utf8,' + encodeURIComponent(svg) + '")';
+}
 const BGS: Record<BackgroundId, (lang: Lang) => string> = {
-  mosaic: () => mosaicSVG(),
-  sunset: () => sunsetSVG(),
-  feed: feedSVG,
+  mosaic: () => svgUrl(mosaicSVG()),
+  sunset: () => svgUrl(sunsetSVG()),
+  feed: (lang) => svgUrl(feedSVG(lang)),
+  lake: () => `url("${lakeBg}")`,
+  forest: () => `url("${forestBg}")`,
 };
 const bgCache: Partial<Record<string, string>> = {};
-export function bgUrl(
-  k: BackgroundId,
-  lang: Lang = currentLang(),
-): string {
+export function bgUrl(k: BackgroundId, lang: Lang = currentLang()): string {
   const key = k + ":" + lang;
-  if (!bgCache[key])
-    bgCache[key] =
-      'url("data:image/svg+xml;utf8,' +
-      encodeURIComponent(BGS[k](lang)) +
-      '")';
+  if (!bgCache[key]) bgCache[key] = BGS[k](lang);
   return bgCache[key];
 }

@@ -1023,7 +1023,8 @@ a {
     top: calc(env(safe-area-inset-top, 0px) + 8px);
     z-index: 10;
     aspect-ratio: auto;
-    height: min(300px, 46vh);
+    /* dvh: estable con la barra dinámica de Safari iOS (vh provocaba saltos) */
+    height: min(300px, 46dvh);
     min-height: 0;
   }
   .stagefoot {
@@ -1122,4 +1123,65 @@ a {
 .font-btn {
   font-family: var(--font);
   font-size: 13px;
+}
+
+/* ---------- preferencias del sistema ---------- */
+/* Sin backdrop-filter no hay desenfoque: se sube el alfa del tinte para que el
+   contraste de los paneles de la interfaz no dependa del filtro. */
+@supports not (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .glasspane {
+    background: color-mix(in srgb, var(--surface) 92%, transparent);
+  }
+  .seg {
+    background: color-mix(in srgb, var(--bg) 55%, var(--surface));
+  }
+  .seg button[aria-checked="true"] {
+    background: var(--surface);
+  }
+}
+
+/* Menos transparencia: el vidrio de la interfaz pasa a fondo sólido y sin
+   desenfoque. La accesibilidad manda sobre la estética; el material que se
+   estudia en el laboratorio se ajusta aparte, en frosted.css. */
+@media (prefers-reduced-transparency: reduce) {
+  .glasspane {
+    background: var(--surface);
+  }
+  .seg,
+  .seg button[aria-checked="true"] {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .seg {
+    background: color-mix(in srgb, var(--bg) 60%, var(--surface));
+  }
+  .seg button[aria-checked="true"] {
+    background: var(--surface);
+  }
+}
+
+/* Más contraste: refuerza el texto secundario, las líneas y los cantos. */
+@media (prefers-contrast: more) {
+  :root {
+    --muted: #454c59;
+    --line: #b3bac6;
+    --glass-edge: color-mix(in srgb, var(--fg) 34%, transparent);
+    --glass-tint: color-mix(in srgb, var(--surface) 86%, transparent);
+  }
+  :root[data-theme="dark"] {
+    --muted: #c3cad6;
+    --line: #3b4250;
+    --glass-edge: rgba(255, 255, 255, 0.26);
+    --glass-tint: color-mix(in srgb, var(--surface) 82%, transparent);
+  }
+}
+@media (prefers-contrast: more) and (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --muted: #c3cad6;
+    --line: #3b4250;
+    --glass-edge: rgba(255, 255, 255, 0.26);
+    --glass-tint: color-mix(in srgb, var(--surface) 82%, transparent);
+  }
 }

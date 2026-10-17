@@ -35,7 +35,7 @@ const es = {
   },
 
   home: {
-    title: "Glassmorphism Lab — desglose del backdrop-filter de iOS",
+    title: "Glassmorphism Lab · desglose del backdrop-filter de iOS",
     description:
       "Laboratorio del vidrio esmerilado (frosted glass) de iOS: apila backdrop-filter, saturación, tinte, borde y brillo capa por capa y mira cómo cambia cada paso.",
     ogAlt:
@@ -45,7 +45,7 @@ const es = {
   },
 
   notFound: {
-    title: "Página no encontrada — Glassmorphism Lab",
+    title: "Página no encontrada · Glassmorphism Lab",
     description:
       "No encontramos esta página. Vuelve al laboratorio para desglosar el vidrio esmerilado de iOS capa por capa.",
     eyebrow: "Error 404",
@@ -82,6 +82,8 @@ const es = {
       mosaic: "Mosaico",
       sunset: "Paisaje",
       feed: "App",
+      lake: "Lago",
+      forest: "Bosque",
     } as Record<string, string>,
     animate: "Mover el fondo",
     bar: "Barra de pestañas",
@@ -316,7 +318,7 @@ const en: typeof es = {
   },
 
   home: {
-    title: "Glassmorphism Lab — breaking down iOS backdrop-filter",
+    title: "Glassmorphism Lab · breaking down iOS backdrop-filter",
     description:
       "An iOS frosted glass lab: stack backdrop-filter, saturation, tint, border and highlight layer by layer, and watch how each step changes the result.",
     ogAlt:
@@ -326,7 +328,7 @@ const en: typeof es = {
   },
 
   notFound: {
-    title: "Page not found — Glassmorphism Lab",
+    title: "Page not found · Glassmorphism Lab",
     description:
       "We couldn't find this page. Head back to the lab to break down iOS frosted glass layer by layer.",
     eyebrow: "Error 404",
@@ -361,6 +363,8 @@ const en: typeof es = {
       mosaic: "Mosaic",
       sunset: "Landscape",
       feed: "App",
+      lake: "Lake",
+      forest: "Forest",
     } as Record<string, string>,
     animate: "Animate the background",
     bar: "Tab bar",

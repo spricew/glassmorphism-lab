@@ -1,4 +1,4 @@
-export type BackgroundId = "mosaic" | "sunset" | "feed";
+export type BackgroundId = "mosaic" | "sunset" | "feed" | "lake" | "forest";
 export type SegKey = "mode" | "material" | "bg" | "view";
 
 export interface LayerState {
