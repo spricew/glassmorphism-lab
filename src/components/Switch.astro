@@ -1,0 +1,15 @@
+---
+export interface Props {
+  id: string;
+  label: string;
+  checked?: boolean;
+}
+
+const { id, label, checked = false } = Astro.props;
+---
+
+<label class="sw">
+  <input type="checkbox" role="switch" id={id} checked={checked} />
+  <span class="trk" aria-hidden="true"></span>
+  <span class="nm">{label}</span>
+</label>

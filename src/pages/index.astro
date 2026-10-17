@@ -2,6 +2,8 @@
 import "../styles/global.css";
 import "../styles/frosted.css";
 import Base from "../layouts/Base.astro";
+import Seg, { type SegItem } from "../components/Seg.astro";
+import Switch from "../components/Switch.astro";
 import { frosted } from "../lib/frosted/index.ts";
 import { buildLd, faq, tries } from "../lib/site.ts";
 import { panelHTML, shell } from "../lab/panels.ts";
@@ -20,23 +22,27 @@ const ogImage = abs("og-image.webp");
 const imageAlt =
   "Panel de vidrio esmerilado de Glassmorphism Lab sobre un fondo de mosaico con formas y colores vivos.";
 
-type SegOption = [value: string, label: string];
-
-const bgOptions: SegOption[] = [
-  ["mosaic", "Mosaico"],
-  ["sunset", "Paisaje"],
-  ["feed", "App"],
+const bgOptions: SegItem[] = [
+  { v: "mosaic", label: "Mosaico" },
+  { v: "sunset", label: "Paisaje" },
+  { v: "feed", label: "App" },
 ];
 
-const modeOptions: SegOption[] = [
-  ["light", "Claro"],
-  ["dark", "Oscuro"],
+const modeOptions: SegItem[] = [
+  { v: "light", label: "Claro", class: "font-btn" },
+  { v: "dark", label: "Oscuro", class: "font-btn" },
 ];
 
-const viewOptions: SegOption[] = [
-  ["full", "Receta completa"],
-  ["naive", "Solo blur"],
+const viewOptions: SegItem[] = [
+  { v: "full", label: "Receta completa", class: "font-btn" },
+  { v: "naive", label: "Solo blur", class: "font-btn" },
 ];
+
+const materialOptions: SegItem[] = frosted.presets.map((preset) => ({
+  v: preset.id,
+  label: preset.label,
+  ariaLabel: preset.id,
+}));
 
 const fontPreloads = [geistLatin, geistMonoLatin];
 
@@ -103,73 +109,22 @@ const ld = buildLd({ canonical, ogImage });
             ></div>
           </div>
           <div class="stagefoot">
-            <div class="seg" data-seg="bg" role="radiogroup" aria-label="Fondo">
-              {
-                bgOptions.map(([value, label]) => (
-                  <button type="button" role="radio" aria-checked="false" data-v={value}>{label}</button>
-                ))
-              }
-            </div>
-            <label class="sw"
-              ><input type="checkbox" role="switch" id="animate" /><span
-                class="trk"
-                aria-hidden="true"
-              ></span
-              ><span class="nm">Mover el fondo</span></label
-            >
-            <label class="sw"
-              ><input type="checkbox" role="switch" id="showbar" checked /><span
-                class="trk"
-                aria-hidden="true"
-              ></span
-              ><span class="nm">Barra de pestañas</span></label
-            >
+            <Seg seg="bg" label="Fondo" options={bgOptions} />
+            <Switch id="animate" label="Mover el fondo" />
+            <Switch id="showbar" label="Barra de pestañas" checked />
           </div>
         </div>
 
         <aside class="inspector glasspane" aria-label="Capas del material">
           <div class="group">
             <span class="eyebrow">Apariencia</span>
-            <div
-              class="seg wide"
-              data-seg="mode"
-              role="radiogroup"
-              aria-label="Apariencia"
-            >
-              {
-                modeOptions.map(([value, label]) => (
-                  <button type="button" role="radio" aria-checked="false" data-v={value} class="font-btn">{label}</button>
-                ))
-              }
-            </div>
+            <Seg seg="mode" label="Apariencia" options={modeOptions} wide />
             <span class="eyebrow mt-4"
               >Grosor · <span id="matName" class="mat-name">regular</span></span
             >
-            <div
-              class="seg wide"
-              data-seg="material"
-              role="radiogroup"
-              aria-label="Grosor"
-            >
-              {
-                frosted.presets.map((preset) => (
-                  <button type="button" role="radio" aria-checked="false" data-v={preset.id} aria-label={preset.id}>{preset.label}</button>
-                ))
-              }
-            </div>
+            <Seg seg="material" label="Grosor" options={materialOptions} wide />
             <span class="eyebrow mt-4">Vista</span>
-            <div
-              class="seg wide"
-              data-seg="view"
-              role="radiogroup"
-              aria-label="Vista"
-            >
-              {
-                viewOptions.map(([value, label]) => (
-                  <button type="button" role="radio" aria-checked="false" data-v={value} class="font-btn">{label}</button>
-                ))
-              }
-            </div>
+            <Seg seg="view" label="Vista" options={viewOptions} wide />
           </div>
           {
             frosted.inspectorGroups.map((group) => (
