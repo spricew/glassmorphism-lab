@@ -1,5 +1,6 @@
 import { $, $$ } from "../lib/utils.js";
 import { bgUrl } from "../lib/backgrounds.js";
+import { currentLang, getDict } from "../lib/i18n.js";
 import type { AppState, Effect, Material, SegKey } from "../lib/material.js";
 import { panelHTML } from "./panels.js";
 import { styleSteps } from "./steps.js";
@@ -24,7 +25,9 @@ export function render<E extends Effect>(mat: Material<E>): void {
   const dark = state.mode === "dark";
   const L = state.layers;
   const naive = state.view === "naive" || state.hold;
-  document.documentElement.style.setProperty("--bgimg", bgUrl(state.bg));
+  const lang = currentLang();
+  const d = getDict(lang).lab;
+  document.documentElement.style.setProperty("--bgimg", bgUrl(state.bg, lang));
   $("#bg").classList.toggle("still", !state.animate);
 
   const panel = $("#panel");
@@ -34,22 +37,20 @@ export function render<E extends Effect>(mat: Material<E>): void {
   bar.hidden = !state.bar;
   $(".gl-content", panel).innerHTML = panelHTML(
     naive
-      ? "Solo blur"
+      ? d.chipNaive
       : state.presetId === "custom"
-        ? "Personalizado"
+        ? d.panelTitleCustom
         : state.presetId,
-    dark ? "Apariencia oscura" : "Apariencia clara",
+    dark ? d.panelDark : d.panelLight,
     mat.panelRows(p, dark),
-    "Arrastra el panel sobre el fondo",
+    d.panelFoot,
   );
   $("#matName").textContent =
-    state.presetId === "custom" ? "personalizado" : state.presetId;
-  $("#chipState").textContent = naive ? "Solo blur" : "Receta completa";
+    state.presetId === "custom" ? d.matNameCustom : state.presetId;
+  $("#chipState").textContent = naive ? d.chipNaive : d.chipFull;
   const hold = $("#hold");
   hold.setAttribute("aria-pressed", state.hold ? "true" : "false");
-  hold.textContent = state.hold
-    ? "Mostrando solo blur"
-    : "Mantén para ver solo blur";
+  hold.textContent = state.hold ? d.holdActive : d.hold;
 
   /* inspector */
   mat.inspectorGroups

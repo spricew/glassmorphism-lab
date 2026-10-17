@@ -1,4 +1,5 @@
 import { $, $$ } from "../lib/utils.js";
+import { currentLang, getDict } from "../lib/i18n.js";
 import type {
   AppState,
   BackgroundId,
@@ -167,15 +168,14 @@ export function bindEvents<E extends Effect>(mat: Material<E>): void {
   const copy = $<HTMLButtonElement>("#copy");
   copy.addEventListener("click", function () {
     const btn = this;
+    const d = getDict(currentLang()).css;
     const txt = $<HTMLPreElement>("#code").textContent ?? "";
     function done(ok: boolean): void {
-      btn.textContent = ok ? "Copiado" : "Selecciona y copia";
+      btn.textContent = ok ? d.copied : d.copyManual;
       const status = $<HTMLSpanElement>("#copyStatus");
-      status.textContent = ok
-        ? "CSS copiado al portapapeles"
-        : "No se pudo copiar automáticamente; el CSS quedó seleccionado";
+      status.textContent = ok ? d.copiedOk : d.copiedFail;
       setTimeout(function () {
-        btn.textContent = "Copiar CSS";
+        btn.textContent = d.copy;
         status.textContent = "";
       }, 1600);
     }
