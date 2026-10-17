@@ -1,0 +1,249 @@
+---
+import "../styles/global.css";
+import "../styles/frosted.css";
+import Base from "./Base.astro";
+import BuildSection from "../components/BuildSection.astro";
+import FaqItem from "../components/FaqItem.astro";
+import Nav from "../components/Nav.astro";
+import Seg, { type SegItem } from "../components/Seg.astro";
+import StepCard from "../components/StepCard.astro";
+import Switch from "../components/Switch.astro";
+import { makeFrosted } from "../lib/frosted/index.ts";
+import { buildLd, faq, tries } from "../lib/site.ts";
+import { panelHTML, shell } from "../lab/panels.ts";
+import { getDict, type Lang } from "../lib/i18n.ts";
+import geistLatin from "../fonts/geist-latin.woff2?url";
+import geistMonoLatin from "../fonts/geist-mono-latin.woff2?url";
+
+export interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const d = getDict(lang);
+const frosted = makeFrosted(lang);
+
+const base = import.meta.env.BASE_URL;
+const canonical = Astro.url.href;
+const abs = (file: string) =>
+  new URL(base + file, Astro.site ?? Astro.url).href;
+
+const ogImage = abs("og-image.webp");
+const fontPreloads = [geistLatin, geistMonoLatin];
+
+const bgOptions: SegItem[] = Object.entries(d.stage.bgOptions).map(
+  ([v, label]) => ({ v, label }),
+);
+
+const modeOptions: SegItem[] = Object.entries(d.inspector.modeOptions).map(
+  ([v, label]) => ({ v, label, class: "font-btn" }),
+);
+
+const viewOptions: SegItem[] = Object.entries(d.inspector.viewOptions).map(
+  ([v, label]) => ({ v, label, class: "font-btn" }),
+);
+
+const materialOptions: SegItem[] = frosted.presets.map((preset) => ({
+  v: preset.id,
+  label: preset.label,
+  ariaLabel: preset.id,
+}));
+
+/* el mini panel es idéntico en los 8 pasos: se construye una sola vez */
+const miniPanelHTML = shell(
+  panelHTML(
+    frosted.mini.title,
+    frosted.mini.sub,
+    frosted.mini.rows,
+    frosted.mini.foot,
+  ),
+);
+
+const ld = buildLd({ canonical, ogImage, lang });
+---
+
+<Base
+  lang={lang}
+  title={d.home.title}
+  description={d.home.description}
+  robots="index, follow"
+  author="spricew"
+  ogImage={ogImage}
+  ogImageAlt={d.home.ogAlt}
+  ld={ld}
+  fontPreloads={fontPreloads}
+>
+  <header>
+    <Nav lang={lang} />
+    <p class="eyebrow">{d.home.eyebrow}</p>
+    <h1 class="main-title">Glassmorphism Lab</h1>
+    <p class="lede">{d.home.lede}</p>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section class="lab" aria-label={d.lab.region}>
+      <div class="stagecol">
+        <div class="stage" id="stage">
+          <div class="bg" id="bg" aria-hidden="true"></div>
+          <span class="chip state" id="chipState" aria-live="polite"
+            >{d.lab.chipFull}</span
+          >
+          <button class="chip hold" id="hold" type="button" aria-pressed="false">
+            {d.lab.hold}
+          </button>
+          <div class="gl bar" id="bar" aria-hidden="true"></div>
+          <p class="sr-only" id="panelHint">{d.lab.panelHint}</p>
+          <div
+            class="gl panel"
+            id="panel"
+            tabindex="0"
+            role="group"
+            aria-label={d.lab.panel}
+            aria-describedby="panelHint"
+          ></div>
+        </div>
+        <div class="stagefoot">
+          <Seg seg="bg" label={d.stage.bg} options={bgOptions} />
+          <Switch id="animate" label={d.stage.animate} />
+          <Switch id="showbar" label={d.stage.bar} checked />
+        </div>
+      </div>
+
+      <aside class="inspector glasspane" aria-label={d.inspector.title}>
+        <div class="group">
+          <span class="eyebrow">{d.inspector.appearance}</span>
+          <Seg
+            seg="mode"
+            label={d.inspector.appearance}
+            options={modeOptions}
+            wide
+          />
+          <span class="eyebrow mt-4"
+            >{d.inspector.thickness} ·
+            <span id="matName" class="mat-name">regular</span></span
+          >
+          <Seg
+            seg="material"
+            label={d.inspector.thickness}
+            options={materialOptions}
+            wide
+          />
+          <span class="eyebrow mt-4">{d.inspector.view}</span>
+          <Seg
+            seg="view"
+            label={d.inspector.view}
+            options={viewOptions}
+            wide
+          />
+        </div>
+        {
+          frosted.inspectorGroups.map((group) => (
+            <>
+              <hr />
+              <div class="group" id={group.id}>
+                <span class="eyebrow">{group.label}</span>
+              </div>
+            </>
+          ))
+        }
+      </aside>
+
+      <div class="codebox glasspane">
+        <div class="codehead">
+          <span class="eyebrow">{d.css.eyebrow}</span>
+          <button class="btn" id="copy" type="button" aria-describedby="copyStatus">
+            {d.css.copy}
+          </button>
+          <span class="sr-only" id="copyStatus" role="status" aria-live="polite"
+          ></span>
+        </div>
+        <pre class="code" id="code" tabindex="0" aria-label={d.css.eyebrow}></pre>
+      </div>
+    </section>
+
+    <BuildSection id="hBuild" title={d.build.title} lede={d.build.lede}>
+      <div class="steps" id="steps">
+        {
+          frosted.steps.map((s, i) => (
+            <StepCard index={i} title={s.t} desc={s.d} panel={miniPanelHTML} />
+          ))
+        }
+      </div>
+    </BuildSection>
+
+    <BuildSection id="hTry" title={d.build.tryTitle}>
+      <div class="tries">
+        {
+          tries(lang).map(({ t, d: desc }) => (
+            <div class="try">
+              <strong>{t}</strong>
+              <p>{desc}</p>
+            </div>
+          ))
+        }
+      </div>
+      {
+        lang === "es" ? (
+          <p class="foot">
+            Los grosores son aproximaciones calibradas a ojo, no los valores
+            internos del sistema. La referencia pública más cercana es el sample
+            code{" "}
+            <a
+              href="https://developer.apple.com/library/archive/samplecode/UIImageEffects/Introduction/Intro.html"
+              rel="noopener noreferrer"
+            >
+              UIImageEffects
+            </a>
+            , que usa saturación 1,8 y un tinte de alfa entre 0,3 y 0,82 según
+            el estilo. El radio de{" "}
+            <a
+              href="https://developer.mozilla.org/es/docs/Web/CSS/backdrop-filter"
+              rel="noopener noreferrer"
+            >
+              <code>blur()</code>
+            </a>{" "}
+            en CSS es una desviación estándar, así que no equivale 1 a 1 al
+            radio de esas funciones.
+          </p>
+        ) : (
+          <p class="foot">
+            The thicknesses are approximations calibrated by eye, not the
+            system's internal values. The closest public reference is the sample
+            code{" "}
+            <a
+              href="https://developer.apple.com/library/archive/samplecode/UIImageEffects/Introduction/Intro.html"
+              rel="noopener noreferrer"
+            >
+              UIImageEffects
+            </a>
+            , which uses a saturation of 1.8 and a tint alpha between 0.3 and
+            0.82 depending on the style. CSS's{" "}
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Web/CSS/backdrop-filter"
+              rel="noopener noreferrer"
+            >
+              <code>blur()</code>
+            </a>{" "}
+            is a standard deviation, so it doesn't map one-to-one to the blur
+            radius of those functions.
+          </p>
+        )
+      }
+    </BuildSection>
+
+    <BuildSection id="hFaq" title={d.build.faqTitle}>
+      <div class="faq">
+        {faq(lang).map((item) => <FaqItem {...item} />)}
+      </div>
+    </BuildSection>
+  </main>
+
+  <Fragment slot="bodyEnd">
+    <script>
+      import { initLab } from "../lab/main.ts";
+      import { makeFrosted } from "../lib/frosted/index.ts";
+      import { currentLang } from "../lib/i18n.ts";
+      initLab(makeFrosted(currentLang()));
+    </script>
+  </Fragment>
+</Base>

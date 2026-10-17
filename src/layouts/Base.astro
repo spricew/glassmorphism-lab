@@ -1,5 +1,14 @@
 ---
+import {
+  altLocalePath,
+  getDict,
+  otherLang,
+  type Lang,
+} from "../lib/i18n.ts";
+import SiteFooter from "../components/SiteFooter.astro";
+
 export interface Props {
+  lang: Lang;
   title: string;
   description: string;
   robots: string;
@@ -9,9 +18,12 @@ export interface Props {
   ld?: Record<string, unknown>;
   wrapClass?: string;
   fontPreloads: string[];
+  /** Alternativas hreflang explícitas (p. ej. en el 404, que apunta al inicio). */
+  altUrls?: { es: string; en: string };
 }
 
 const {
+  lang,
   title,
   description,
   robots,
@@ -21,14 +33,25 @@ const {
   ld,
   wrapClass = "wrap",
   fontPreloads,
+  altUrls,
 } = Astro.props;
 
 const base = import.meta.env.BASE_URL;
 const canonical = Astro.url.href;
+const d = getDict(lang);
+const altLocale = getDict(otherLang(lang)).ogLocale;
+
+const origin = Astro.site ?? Astro.url;
+const altEs =
+  altUrls?.es ??
+  new URL(altLocalePath(Astro.url.pathname, base, "es"), origin).href;
+const altEn =
+  altUrls?.en ??
+  new URL(altLocalePath(Astro.url.pathname, base, "en"), origin).href;
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta
@@ -41,7 +64,8 @@ const canonical = Astro.url.href;
     <meta name="robots" content={robots} />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Glassmorphism Lab" />
-    <meta property="og:locale" content="es_ES" />
+    <meta property="og:locale" content={d.ogLocale} />
+    <meta property="og:locale:alternate" content={altLocale} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -65,6 +89,9 @@ const canonical = Astro.url.href;
     {ogImage && <meta name="twitter:image" content={ogImage} />}
     {ogImageAlt && <meta name="twitter:image:alt" content={ogImageAlt} />}
     <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="es" href={altEs} />
+    <link rel="alternate" hreflang="en" href={altEn} />
+    <link rel="alternate" hreflang="x-default" href={altEs} />
     <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
     <link
       rel="icon"
@@ -92,10 +119,11 @@ const canonical = Astro.url.href;
     {ld && <script type="application/ld+json" set:html={JSON.stringify(ld)} />}
   </head>
   <body>
-    <a class="skip-link" href="#main">Saltar al contenido</a>
+    <a class="skip-link" href="#main">{d.a11y.skip}</a>
     <div class="ambient" aria-hidden="true"></div>
     <div class={wrapClass}>
       <slot />
+      <SiteFooter lang={lang} />
     </div>
     <slot name="bodyEnd" />
   </body>

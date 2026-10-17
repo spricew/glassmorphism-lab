@@ -1,0 +1,105 @@
+---
+import "../styles/global.css";
+import Base from "./Base.astro";
+import { altLocalePath, getDict, type Lang } from "../lib/i18n.ts";
+import geistLatin from "../fonts/geist-latin.woff2?url";
+import geistMonoLatin from "../fonts/geist-mono-latin.woff2?url";
+
+export interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const d = getDict(lang);
+const base = import.meta.env.BASE_URL;
+
+/* el 404 no tiene URL propia estable: sus alternativas apuntan al inicio de cada idioma */
+const origin = Astro.site ?? Astro.url;
+const altUrls = {
+  es: new URL(altLocalePath("/", base, "es"), origin).href,
+  en: new URL(altLocalePath("/", base, "en"), origin).href,
+};
+
+const fontPreloads = [geistLatin, geistMonoLatin];
+---
+
+<Base
+  lang={lang}
+  title={d.notFound.title}
+  description={d.notFound.description}
+  robots="noindex, follow"
+  wrapClass="wrap wrap-404"
+  fontPreloads={fontPreloads}
+  altUrls={altUrls}
+>
+  <main id="main" tabindex="-1">
+    <section class="glass glasspane" aria-labelledby="h404">
+      <span class="ghost" aria-hidden="true">404</span>
+      <div class="glass-body">
+        <p class="eyebrow">{d.notFound.eyebrow}</p>
+        <h1 class="main-title" id="h404">{d.notFound.heading}</h1>
+        <p class="lede">{d.notFound.lede}</p>
+        <div class="actions">
+          <a class="btn" href={base} rel="noopener noreferrer"
+            >{d.notFound.back}</a
+          >
+        </div>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style is:global>
+  .wrap-404 {
+    position: relative;
+    min-height: 100dvh;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+  }
+  .wrap-404 main {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* layout del panel; la vista de vidrio (tinte, blur, canto, grano) viene de .glasspane */
+  .glass {
+    overflow: hidden;
+    width: min(600px, 100%);
+    border-radius: 28px;
+    padding: clamp(26px, 4.5vw, 48px);
+  }
+  .glass .ghost {
+    position: absolute;
+    top: clamp(-14px, -1.5vw, -6px);
+    right: clamp(8px, 3vw, 26px);
+    font: 600 clamp(96px, 24vw, 190px) / 1 var(--font);
+    letter-spacing: -0.05em;
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--line);
+    opacity: 0.75;
+    pointer-events: none;
+    user-select: none;
+  }
+  .glass-body {
+    position: relative;
+    z-index: 1;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: clamp(20px, 3vw, 28px);
+  }
+  .actions .btn {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+  }
+  @media (max-width: 560px) {
+    .glass .ghost {
+      opacity: 0.5;
+    }
+  }
+</style>
