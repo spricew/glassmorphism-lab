@@ -4,4 +4,11 @@ import { defineConfig } from "astro/config";
 export default defineConfig({
   site: "https://spricew.github.io",
   base: "/glassmorphism-lab/",
+  i18n: {
+    defaultLocale: "es",
+    locales: ["es", "en"],
+    routing: {
+      prefixDefaultLocale: false,
+    },
+  },
 });
