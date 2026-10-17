@@ -1,0 +1,23 @@
+---
+export interface Props {
+  index: number;
+  title: string;
+  desc: string;
+  panel: string;
+}
+
+const { index, title, desc, panel } = Astro.props;
+---
+
+<article class="step">
+  <div class="mini" data-i={index} aria-hidden="true">
+    <div class="gl" set:html={panel} />
+  </div>
+  <div>
+    <h3>
+      <span>{index}</span>
+      {title}
+    </h3>
+    <p>{desc}</p>
+  </div>
+</article>

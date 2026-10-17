@@ -1,0 +1,23 @@
+---
+export interface Props {
+  id: string;
+  title: string;
+  lede?: string;
+}
+
+const { id, title, lede } = Astro.props;
+---
+
+<section class="build" aria-labelledby={id}>
+  {
+    lede ? (
+      <div>
+        <h2 id={id}>{title}</h2>
+        <p class="lede">{lede}</p>
+      </div>
+    ) : (
+      <h2 id={id}>{title}</h2>
+    )
+  }
+  <slot />
+</section>
