@@ -967,6 +967,12 @@ a {
       translate: 0 10px;
     }
   }
+  @keyframes rise-stagger {
+    from {
+      opacity: 0;
+      translate: 0 12px;
+    }
+  }
   .sitebar {
     animation: rise 0.5s var(--ease-out) both;
   }
@@ -987,6 +993,15 @@ a {
   }
   .codebox {
     animation: rise 0.55s var(--ease-out) 220ms both;
+  }
+  /* revelado en scroll para bloques fuera del lab */
+  #hBuild,
+  #hTry,
+  #hFaq {
+    opacity: 0;
+    animation: rise-stagger 0.6s var(--ease-out) both;
+    animation-timeline: view();
+    animation-range: entry 8% cover 18%;
   }
   /* la pastilla seleccionada del segmentado aparece con un pulso corto */
   @keyframes seg-on {
@@ -1087,6 +1102,13 @@ a {
   .faq-item p,
   .faq-item::details-content {
     transition: none;
+  }
+  /* también evitamos el reveal de scroll en reduce motion */
+  #hBuild,
+  #hTry,
+  #hFaq {
+    animation: none;
+    opacity: 1;
   }
   .btn:active,
   .seg button:active,
