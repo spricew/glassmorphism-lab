@@ -19,6 +19,7 @@ Laboratorio interactivo que descompone el _frosted glass_ de Apple (`backdrop-fi
 - **Ver la construcción paso a paso.** Ocho miniaturas que suman una capa por celda, con la apariencia y el fondo que hayas elegido.
 - **Copiar el CSS resultante.** Se genera la receta de verdad (no la vista naive) con un botón de copiado.
 - **Cambiar de tema.** Apariencia clara u oscura, con `prefers-color-scheme` y `prefers-reduced-motion` respetados.
+- **Cambiar de idioma.** El botón del navbar alterna entre español (por defecto, en `/`) e inglés (`/en/`); todo el contenido, incluidos los textos generados en runtime, se traduce.
 
 ## Detalles que no se ven
 
@@ -28,6 +29,7 @@ Laboratorio interactivo que descompone el _frosted glass_ de Apple (`backdrop-fi
 - **Fondos como SVG en data URI** construidos en runtime, con bordes nítidos para que el blur se note.
 - **Accesibilidad**: skip link, segmentados con `role="radio"` y navegación por teclado, anuncios `aria-live` y safe areas de iOS.
 - **SEO**: JSON-LD (`WebSite`, `Person`, `SoftwareApplication`, `HowTo`, `FAQPage`), Open Graph, Twitter Cards, sitemap, robots y web manifest.
+- **Bilingüe (es/en)** con el i18n de Astro (`prefixDefaultLocale: false`): un diccionario tipado en `lib/i18n.ts`, `hreflang` cruzado y un único botón que alterna de idioma.
 
 ## Stack
 
@@ -43,18 +45,19 @@ Laboratorio interactivo que descompone el _frosted glass_ de Apple (`backdrop-fi
 
 ```
 src/
-├─ components/     Switch, Seg, StepCard, FaqItem, BuildSection
+├─ components/     Nav, Switch, Seg, StepCard, FaqItem, BuildSection, SiteFooter
 ├─ fonts/          Geist y Geist Mono (self-hosted)
 ├─ lab/            motor de cliente: init, render, events, inspector, panels
-├─ layouts/        Base.astro (head, SEO, a11y)
+├─ layouts/        Base (head, SEO, a11y), HomePage y NotFound (por idioma)
 ├─ lib/
 │  ├─ frosted/     definición del material: estado, capas, pasos, CSS
 │  ├─ material.ts  contratos (Material, Effect, AppState…)
 │  ├─ backgrounds  fondos SVG generados en runtime
 │  ├─ hilite.ts    resaltado del CSS resultante
+│  ├─ i18n.ts      diccionario es/en tipado y helpers de idioma
 │  ├─ site.ts      contenido y datos estructurados
 │  └─ utils.ts     helpers y capacidades del navegador
-├─ pages/          index, 404, robots, sitemap, web manifest
+├─ pages/          index y 404 (es), en/ (en), robots, sitemap, web manifest
 └─ styles/         global.css, frosted.css, fonts.css
 ```
 
