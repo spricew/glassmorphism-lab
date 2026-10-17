@@ -1,9 +1,12 @@
+import { currentLang, getDict, type Lang } from "./i18n.js";
 import type { BackgroundId } from "./material.js";
 
 /* fondos (SVG en data URI, con bordes nítidos para que el blur se note) */
 const SVG_OPEN =
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">';
 const FONT = 'font-family="Helvetica, Arial, sans-serif"';
+/* color de cada fila del feed (el texto se resuelve por idioma) */
+const ROW_COLORS = ["#34c759", "#ff9500", "#ff2d55", "#ffcc00", "#0a84ff"];
 
 function mosaicSVG(): string {
   return (
@@ -57,22 +60,17 @@ function sunsetSVG(): string {
     "</svg>"
   );
 }
-function feedSVG(): string {
+function feedSVG(lang: Lang): string {
+  const t = getDict(lang).bg.feed;
   const ff = FONT;
   let out = "";
   let i: number;
-  const rows: Array<[string, string, string]> = [
-    ["Mensajes", "Ana: ¿nos vemos a las 6?", "#34c759"],
-    ["Recordatorios", "Comprar boletos de tren", "#ff9500"],
-    ["Fotos", "124 nuevas de Oaxaca", "#ff2d55"],
-    ["Notas", "Ideas para el viaje", "#ffcc00"],
-    ["Mapas", "Ruta a Coyoacán · 24 min", "#0a84ff"],
-  ];
-  const cards: Array<[string, string, number]> = [
-    ["Oaxaca", "3 días · 124 fotos", 0],
-    ["Coyoacán", "Sábado · 6 p. m.", 1],
-    ["Tren Maya", "Salida 07:40", 2],
-  ];
+  const rows: Array<[string, string, string]> = t.rows.map(function (r, k) {
+    return [r[0], r[1], ROW_COLORS[k]];
+  });
+  const cards: Array<[string, string, number]> = t.cards.map(function (c, k) {
+    return [c[0], c[1], k];
+  });
   let defs =
     '<linearGradient id="c0" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff512f"/><stop offset="1" stop-color="#f09819"/></linearGradient>' +
     '<linearGradient id="c1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0575e6"/><stop offset="1" stop-color="#00f260"/></linearGradient>' +
@@ -90,8 +88,8 @@ function feedSVG(): string {
       `<linearGradient id="t${i}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${tiles[i]}"/><stop offset="1" stop-color="${tiles[(i + 2) % 6]}"/></linearGradient>`;
   }
   out += '<rect width="1600" height="900" fill="#f2f2f7"/>';
-  out += `<text x="60" y="130" font-size="112" font-weight="800" fill="#111" ${ff}>Hoy</text>`;
-  out += `<text x="64" y="186" font-size="34" fill="#8e8e93" ${ff}>jueves 8 de octubre</text>`;
+  out += `<text x="60" y="130" font-size="112" font-weight="800" fill="#111" ${ff}>${t.today}</text>`;
+  out += `<text x="64" y="186" font-size="34" fill="#8e8e93" ${ff}>${t.date}</text>`;
   cards.forEach(function (c, k) {
     const x = 60 + k * 500;
     out += `<rect x="${x}" y="226" width="470" height="270" rx="40" fill="url(#c${c[2]})"/>`;
@@ -116,15 +114,21 @@ function feedSVG(): string {
   return SVG_OPEN + "<defs>" + defs + "</defs>" + out + "</svg>";
 }
 
-const BGS: Record<BackgroundId, () => string> = {
-  mosaic: mosaicSVG,
-  sunset: sunsetSVG,
+const BGS: Record<BackgroundId, (lang: Lang) => string> = {
+  mosaic: () => mosaicSVG(),
+  sunset: () => sunsetSVG(),
   feed: feedSVG,
 };
-const bgCache: Partial<Record<BackgroundId, string>> = {};
-export function bgUrl(k: BackgroundId): string {
-  if (!bgCache[k])
-    bgCache[k] =
-      'url("data:image/svg+xml;utf8,' + encodeURIComponent(BGS[k]()) + '")';
-  return bgCache[k];
+const bgCache: Partial<Record<string, string>> = {};
+export function bgUrl(
+  k: BackgroundId,
+  lang: Lang = currentLang(),
+): string {
+  const key = k + ":" + lang;
+  if (!bgCache[key])
+    bgCache[key] =
+      'url("data:image/svg+xml;utf8,' +
+      encodeURIComponent(BGS[k](lang)) +
+      '")';
+  return bgCache[key];
 }
