@@ -1,74 +1,25 @@
 ---
 import "../styles/global.css";
+import Base from "../layouts/Base.astro";
 import geistLatin from "../fonts/geist-latin.woff2?url";
 import geistMonoLatin from "../fonts/geist-mono-latin.woff2?url";
 
 const base = import.meta.env.BASE_URL;
-const canonical = Astro.url.href;
+
 const title = "Página no encontrada — Glassmorphism Lab";
 const description =
   "No encontramos esta página. Vuelve al laboratorio para desglosar el vidrio esmerilado de iOS capa por capa.";
+
+const fontPreloads = [geistLatin, geistMonoLatin];
 ---
 
-<!doctype html>
-<html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width,initial-scale=1,viewport-fit=cover"
-    />
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <meta name="robots" content="noindex, follow" />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Glassmorphism Lab" />
-    <meta property="og:locale" content="es_ES" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <link rel="canonical" href={canonical} />
-    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
-    <link
-      rel="icon"
-      href={`${base}favicon-32.png`}
-      sizes="32x32"
-      type="image/png"
-    />
-    <link rel="apple-touch-icon" href={`${base}apple-touch-icon.png`} />
-    <link rel="manifest" href={`${base}site.webmanifest`} />
-    <meta
-      name="theme-color"
-      content="#f3f4f7"
-      media="(prefers-color-scheme: light)"
-    />
-    <meta
-      name="theme-color"
-      content="#0c0e12"
-      media="(prefers-color-scheme: dark)"
-    />
-    <link
-      rel="preload"
-      as="font"
-      type="font/woff2"
-      href={geistLatin}
-      crossorigin
-    />
-    <link
-      rel="preload"
-      as="font"
-      type="font/woff2"
-      href={geistMonoLatin}
-      crossorigin
-    />
-  </head>
-  <body>
-    <a class="skip-link" href="#main">Saltar al contenido</a>
-    <div class="ambient" aria-hidden="true"></div>
-    <div class="wrap wrap-404">
+<Base
+  title={title}
+  description={description}
+  robots="noindex, follow"
+  wrapClass="wrap wrap-404"
+  fontPreloads={fontPreloads}
+>
       <main id="main" tabindex="-1">
         <section class="glass glasspane" aria-labelledby="h404">
           <span class="ghost" aria-hidden="true">404</span>
@@ -85,11 +36,9 @@ const description =
           </div>
         </section>
       </main>
-    </div>
-  </body>
-</html>
+</Base>
 
-<style>
+<style is:global>
   .wrap-404 {
     position: relative;
     min-height: 100dvh;

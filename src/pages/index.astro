@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import "../styles/frosted.css";
+import Base from "../layouts/Base.astro";
 import { frosted } from "../lib/frosted/index.ts";
 import { buildLd, faq, tries } from "../lib/site.ts";
 import { panelHTML, shell } from "../lab/panels.ts";
@@ -51,65 +52,16 @@ const miniPanelHTML = shell(
 
 const ld = buildLd({ canonical, ogImage });
 ---
-<!doctype html>
-<html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width,initial-scale=1,viewport-fit=cover"
-    />
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <meta name="author" content="spricew" />
-    <meta name="robots" content="index, follow" />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Glassmorphism Lab" />
-    <meta property="og:locale" content="es_ES" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={ogImage} />
-    <meta property="og:image:type" content="image/webp" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={imageAlt} />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={ogImage} />
-    <meta name="twitter:image:alt" content={imageAlt} />
-    <link rel="canonical" href={canonical} />
-    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
-    <link
-      rel="icon"
-      href={`${base}favicon-32.png`}
-      sizes="32x32"
-      type="image/png"
-    />
-    <link rel="apple-touch-icon" href={`${base}apple-touch-icon.png`} />
-    <link rel="manifest" href={`${base}site.webmanifest`} />
-    <meta
-      name="theme-color"
-      content="#f3f4f7"
-      media="(prefers-color-scheme: light)"
-    />
-    <meta
-      name="theme-color"
-      content="#0c0e12"
-      media="(prefers-color-scheme: dark)"
-    />
-    {
-      fontPreloads.map((href) => (
-        <link rel="preload" as="font" type="font/woff2" href={href} crossorigin />
-      ))
-    }
-    <script type="application/ld+json" set:html={JSON.stringify(ld)} />
-  </head>
-  <body>
-    <a class="skip-link" href="#main">Saltar al contenido</a>
-    <div class="ambient" aria-hidden="true"></div>
-    <div class="wrap">
+<Base
+  title={title}
+  description={description}
+  robots="index, follow"
+  author="spricew"
+  ogImage={ogImage}
+  ogImageAlt={imageAlt}
+  ld={ld}
+  fontPreloads={fontPreloads}
+>
       <header>
         <p class="eyebrow">Material translúcido clásico · iOS 7 a iOS 18</p>
         <h1 class="main-title">Glassmorphism Lab</h1>
@@ -323,12 +275,12 @@ const ld = buildLd({ canonical, ogImage });
         </div>
       </section>
       </main>
-    </div>
 
-    <script>
-      import { initLab } from "../lab/main.ts";
-      import { frosted } from "../lib/frosted/index.ts";
-      initLab(frosted);
-    </script>
-  </body>
-</html>
+    <Fragment slot="bodyEnd">
+      <script>
+        import { initLab } from "../lab/main.ts";
+        import { frosted } from "../lib/frosted/index.ts";
+        initLab(frosted);
+      </script>
+    </Fragment>
+</Base>
