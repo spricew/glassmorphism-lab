@@ -18,7 +18,12 @@ const ogImage = abs("og-image.webp");
 const imageAlt =
   "Panel de vidrio esmerilado de Glassmorphism Lab sobre un fondo de mosaico con formas y colores vivos.";
 
-const faq = [
+interface FaqItem {
+  q: string;
+  a: string;
+}
+
+const faq: FaqItem[] = [
   {
     q: "¿Qué es el glassmorphism?",
     a: "Es un estilo de interfaz que imita el vidrio esmerilado: paneles translúcidos que difuminan lo que hay detrás, con un tinte sutil, un borde fino y un brillo interior. Apple lo popularizó en iOS 7 y sigue presente en iOS 18, macOS y visionOS.",
@@ -36,6 +41,60 @@ const faq = [
     a: "Casi siempre por el contexto de apilamiento. Si un ancestro tiene transform, opacity menor que 1, filter o z-index, Chromium trata ese elemento como raíz del fondo y el blur deja de ver lo que hay detrás. Evita esos valores en la cadena de ancestros del panel.",
   },
 ];
+
+interface TryItem {
+  t: string;
+  d: string;
+}
+
+const tries: TryItem[] = [
+  {
+    t: "Apaga la saturación en Paisaje",
+    d: "Sin ella el blur deja el cielo en un gris apagado. Con 180 % el naranja del sol sobrevive al difuminado.",
+  },
+  {
+    t: "Baja el tinte a cero en App",
+    d: "El texto de atrás sigue casi legible a través del vidrio. El tinte no es decoración, es lo que garantiza el contraste.",
+  },
+  {
+    t: "Activa Vibrancy en oscuro",
+    d: "Las etiquetas dejan de ser un gris plano y toman el color del fondo. Se aprecia mejor sobre Mosaico.",
+  },
+  {
+    t: "Quita borde y brillo",
+    d: "Cada uno pesa poco, pero sin ellos el panel pierde canto y se lee como una mancha en lugar de un objeto.",
+  },
+];
+
+type SegOption = [value: string, label: string];
+
+const bgOptions: SegOption[] = [
+  ["mosaic", "Mosaico"],
+  ["sunset", "Paisaje"],
+  ["feed", "App"],
+];
+
+const modeOptions: SegOption[] = [
+  ["light", "Claro"],
+  ["dark", "Oscuro"],
+];
+
+const viewOptions: SegOption[] = [
+  ["full", "Receta completa"],
+  ["naive", "Solo blur"],
+];
+
+const fontPreloads = [geistLatin, geistMonoLatin];
+
+/* el mini panel es idéntico en los 8 pasos: se construye una sola vez */
+const miniPanelHTML = shell(
+  panelHTML(
+    frosted.mini.title,
+    frosted.mini.sub,
+    frosted.mini.rows,
+    frosted.mini.foot,
+  ),
+);
 
 const ld = {
   "@context": "https://schema.org",
@@ -163,20 +222,11 @@ const ld = {
       content="#0c0e12"
       media="(prefers-color-scheme: dark)"
     />
-    <link
-      rel="preload"
-      as="font"
-      type="font/woff2"
-      href={geistLatin}
-      crossorigin
-    />
-    <link
-      rel="preload"
-      as="font"
-      type="font/woff2"
-      href={geistMonoLatin}
-      crossorigin
-    />
+    {
+      fontPreloads.map((href) => (
+        <link rel="preload" as="font" type="font/woff2" href={href} crossorigin />
+      ))
+    }
     <script type="application/ld+json" set:html={JSON.stringify(ld)} />
   </head>
   <body>
@@ -225,9 +275,11 @@ const ld = {
           </div>
           <div class="stagefoot">
             <div class="seg" data-seg="bg" role="radiogroup" aria-label="Fondo">
-              <button type="button" role="radio" aria-checked="false" data-v="mosaic">Mosaico</button>
-              <button type="button" role="radio" aria-checked="false" data-v="sunset">Paisaje</button>
-              <button type="button" role="radio" aria-checked="false" data-v="feed">App</button>
+              {
+                bgOptions.map(([value, label]) => (
+                  <button type="button" role="radio" aria-checked="false" data-v={value}>{label}</button>
+                ))
+              }
             </div>
             <label class="sw"
               ><input type="checkbox" role="switch" id="animate" /><span
@@ -255,12 +307,11 @@ const ld = {
               role="radiogroup"
               aria-label="Apariencia"
             >
-              <button type="button" role="radio" aria-checked="false" data-v="light" class="font-btn">
-                Claro
-              </button>
-              <button type="button" role="radio" aria-checked="false" data-v="dark" class="font-btn">
-                Oscuro
-              </button>
+              {
+                modeOptions.map(([value, label]) => (
+                  <button type="button" role="radio" aria-checked="false" data-v={value} class="font-btn">{label}</button>
+                ))
+              }
             </div>
             <span class="eyebrow mt-4"
               >Grosor · <span id="matName" class="mat-name">regular</span></span
@@ -271,17 +322,11 @@ const ld = {
               role="radiogroup"
               aria-label="Grosor"
             >
-              <button type="button" role="radio" aria-checked="false" data-v="ultraThin" aria-label="ultraThin">
-                XS
-              </button>
-              <button type="button" role="radio" aria-checked="false" data-v="thin" aria-label="thin">S</button>
-              <button type="button" role="radio" aria-checked="false" data-v="regular" aria-label="regular">
-                M
-              </button>
-              <button type="button" role="radio" aria-checked="false" data-v="thick" aria-label="thick">L</button>
-              <button type="button" role="radio" aria-checked="false" data-v="ultraThick" aria-label="ultraThick">
-                XL
-              </button>
+              {
+                frosted.presets.map((preset) => (
+                  <button type="button" role="radio" aria-checked="false" data-v={preset.id} aria-label={preset.id}>{preset.label}</button>
+                ))
+              }
             </div>
             <span class="eyebrow mt-4">Vista</span>
             <div
@@ -290,28 +335,21 @@ const ld = {
               role="radiogroup"
               aria-label="Vista"
             >
-              <button type="button" role="radio" aria-checked="false" data-v="full" class="font-btn">
-                Receta completa
-              </button>
-              <button type="button" role="radio" aria-checked="false" data-v="naive" class="font-btn">
-                Solo blur
-              </button>
+              {
+                viewOptions.map(([value, label]) => (
+                  <button type="button" role="radio" aria-checked="false" data-v={value} class="font-btn">{label}</button>
+                ))
+              }
             </div>
           </div>
-          <hr />
-          <div class="group" id="gFill">
-            <span class="eyebrow">Relleno</span>
-          </div>
-          <hr />
-          <div class="group" id="gFinish">
-            <span class="eyebrow">Acabado</span>
-          </div>
-          <hr />
-          <div class="group" id="gShape">
-            <span class="eyebrow">Forma</span>
-          </div>
-          <hr />
-          <div class="group" id="gText"><span class="eyebrow">Texto</span></div>
+          {
+            frosted.inspectorGroups.map((group) => (
+              <>
+                <hr />
+                <div class="group" id={group.id}><span class="eyebrow">{group.label}</span></div>
+              </>
+            ))
+          }
         </aside>
 
         <div class="codebox glasspane">
@@ -340,17 +378,7 @@ const ld = {
             frosted.steps.map((s, i) => (
               <article class="step">
                 <div class="mini" data-i={i} aria-hidden="true">
-                  <div
-                    class="gl"
-                    set:html={shell(
-                      panelHTML(
-                        frosted.mini.title,
-                        frosted.mini.sub,
-                        frosted.mini.rows,
-                        frosted.mini.foot,
-                      ),
-                    )}
-                  />
+                  <div class="gl" set:html={miniPanelHTML} />
                 </div>
                 <div>
                   <h3>
@@ -368,34 +396,14 @@ const ld = {
       <section class="build" aria-labelledby="hTry">
         <h2 id="hTry">Cosas para probar</h2>
         <div class="tries">
-          <div class="try">
-            <strong>Apaga la saturación en Paisaje</strong>
-            <p>
-              Sin ella el blur deja el cielo en un gris apagado. Con 180 % el
-              naranja del sol sobrevive al difuminado.
-            </p>
-          </div>
-          <div class="try">
-            <strong>Baja el tinte a cero en App</strong>
-            <p>
-              El texto de atrás sigue casi legible a través del vidrio. El tinte
-              no es decoración, es lo que garantiza el contraste.
-            </p>
-          </div>
-          <div class="try">
-            <strong>Activa Vibrancy en oscuro</strong>
-            <p>
-              Las etiquetas dejan de ser un gris plano y toman el color del
-              fondo. Se aprecia mejor sobre Mosaico.
-            </p>
-          </div>
-          <div class="try">
-            <strong>Quita borde y brillo</strong>
-            <p>
-              Cada uno pesa poco, pero sin ellos el panel pierde canto y se lee
-              como una mancha en lugar de un objeto.
-            </p>
-          </div>
+          {
+            tries.map(({ t, d }) => (
+              <div class="try">
+                <strong>{t}</strong>
+                <p>{d}</p>
+              </div>
+            ))
+          }
         </div>
         <p class="foot">
           Los grosores son aproximaciones calibradas a ojo, no los valores
