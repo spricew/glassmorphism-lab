@@ -166,16 +166,20 @@ export function bindEvents<E extends Effect>(mat: Material<E>): void {
 
   /* copiar */
   const copy = $<HTMLButtonElement>("#copy");
+  let copyTimer: number | undefined;
   copy.addEventListener("click", function () {
     const btn = this;
     const d = getDict(currentLang()).css;
     const txt = $<HTMLPreElement>("#code").textContent ?? "";
     function done(ok: boolean): void {
       btn.textContent = ok ? d.copied : d.copyManual;
+      btn.classList.toggle("done", ok);
       const status = $<HTMLSpanElement>("#copyStatus");
       status.textContent = ok ? d.copiedOk : d.copiedFail;
-      setTimeout(function () {
+      window.clearTimeout(copyTimer);
+      copyTimer = window.setTimeout(function () {
         btn.textContent = d.copy;
+        btn.classList.remove("done");
         status.textContent = "";
       }, 1600);
     }
