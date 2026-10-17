@@ -1,7 +1,13 @@
 import { colors, shadowParts } from "./glass.js";
 import type { FrostedEffect } from "./glass.js";
+import { currentLang, getDict, type Lang } from "../i18n.js";
 
-export function genCSS(p: FrostedEffect, dark: boolean): string {
+export function genCSS(
+  p: FrostedEffect,
+  dark: boolean,
+  lang: Lang = currentLang(),
+): string {
+  const comments = getDict(lang).css.comments;
   const c = colors(dark);
   const L: string[] = [];
   L.push(".glass {");
@@ -12,12 +18,9 @@ export function genCSS(p: FrostedEffect, dark: boolean): string {
     if (p.sat !== 100) f.push(`saturate(${p.sat}%)`);
     L.push("  -webkit-backdrop-filter: " + f.join(" ") + ";");
     L.push("  backdrop-filter: " + f.join(" ") + ";");
-  } else L.push("  /* sin backdrop-filter */");
+  } else L.push(comments.noBackdrop);
   L.push(`  border-radius: ${p.radius}px;`);
-  if (p.sq)
-    L.push(
-      "  corner-shape: squircle; /* si no hay soporte, queda el radio */",
-    );
+  if (p.sq) L.push(comments.squircle);
   const sh = shadowParts(p, dark);
   if (sh.length) {
     L.push("  box-shadow:");
@@ -28,7 +31,7 @@ export function genCSS(p: FrostedEffect, dark: boolean): string {
   L.push("}");
   if (p.noise > 0) {
     L.push("");
-    L.push(".glass::after { /* grano */");
+    L.push(comments.grain);
     L.push('  content: ""; position: absolute; inset: 0;');
     L.push("  border-radius: inherit; pointer-events: none;");
     L.push("  background: url(noise-128.png);");
@@ -37,9 +40,7 @@ export function genCSS(p: FrostedEffect, dark: boolean): string {
   }
   if (p.vib) {
     L.push("");
-    L.push(
-      ".glass .content { /* vibrancy: vive fuera del elemento con backdrop-filter */",
-    );
+    L.push(comments.vibrancy);
     L.push(`  mix-blend-mode: ${dark ? "plus-lighter" : "multiply"};`);
     L.push(
       "  color: " +

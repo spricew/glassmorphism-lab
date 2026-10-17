@@ -1,4 +1,5 @@
 import { REDUCE } from "../utils.js";
+import { getDict, type Lang } from "../i18n.js";
 import type { AppState, InspectorGroup } from "../material.js";
 
 export type MaterialId =
@@ -69,91 +70,63 @@ export const state: FrostedState = {
 /* capas cuyo ajuste manual marca el material como personalizado */
 export const MATERIAL_KEYS: SliderLayerId[] = ["blur", "sat", "tint"];
 
-export const INSPECTOR: InspectorGroup[] = [
+/* estructura del inspector: rangos y unidades viven aquí; los textos, en i18n */
+interface LayerSpec {
+  k: string;
+  unit?: string;
+  min?: number;
+  max?: number;
+  step?: number;
+  radius?: boolean;
+}
+interface GroupSpec {
+  id: string;
+  items: LayerSpec[];
+}
+
+const INSPECTOR_SPEC: GroupSpec[] = [
   {
     id: "gFill",
-    label: "Relleno",
     items: [
-      {
-        k: "blur",
-        name: "Desenfoque",
-        unit: " px",
-        min: 0,
-        max: 60,
-        step: 1,
-        hint: "Gaussiano sobre lo que hay detrás.",
-      },
-      {
-        k: "sat",
-        name: "Saturación",
-        unit: " %",
-        min: 100,
-        max: 260,
-        step: 5,
-        hint: "Devuelve el color que el blur apaga.",
-      },
-      {
-        k: "tint",
-        name: "Tinte",
-        unit: " %",
-        min: 0,
-        max: 95,
-        step: 1,
-        hint: "Capa clara u oscura que fija el contraste.",
-      },
-      {
-        k: "noise",
-        name: "Grano",
-        unit: "",
-        min: 0,
-        max: 100,
-        step: 1,
-        hint: "Ruido fino contra el banding.",
-      },
+      { k: "blur", unit: " px", min: 0, max: 60, step: 1 },
+      { k: "sat", unit: " %", min: 100, max: 260, step: 5 },
+      { k: "tint", unit: " %", min: 0, max: 95, step: 1 },
+      { k: "noise", unit: "", min: 0, max: 100, step: 1 },
     ],
   },
   {
     id: "gFinish",
-    label: "Acabado",
-    items: [
-      {
-        k: "hair",
-        name: "Hairline de 0,5 px",
-        hint: "Canto casi invisible que separa el panel del fondo.",
-      },
-      {
-        k: "hl",
-        name: "Brillo interior",
-        hint: "Luz en el borde superior que sugiere grosor.",
-      },
-      {
-        k: "shadow",
-        name: "Sombra en capas",
-        hint: "Una difusa y una cercana, ambas de baja opacidad.",
-      },
-    ],
+    items: [{ k: "hair" }, { k: "hl" }, { k: "shadow" }],
   },
   {
     id: "gShape",
-    label: "Forma",
-    items: [
-      {
-        k: "sq",
-        name: "Esquinas continuas",
-        hint: "La curva se funde con el lado recto, sin arco circular.",
-        radius: true,
-      },
-    ],
+    items: [{ k: "sq", radius: true }],
   },
   {
     id: "gText",
-    label: "Texto",
-    items: [
-      {
-        k: "vib",
-        name: "Vibrancy",
-        hint: "Las etiquetas se mezclan con el fondo en lugar de ser gris plano.",
-      },
-    ],
+    items: [{ k: "vib" }],
   },
 ];
+
+export function inspectorGroups(lang: Lang): InspectorGroup[] {
+  const d = getDict(lang).inspector;
+  return INSPECTOR_SPEC.map(function (group) {
+    return {
+      id: group.id,
+      label: d.groups[group.id] ?? group.id,
+      items: group.items.map(function (item) {
+        const text = d.layers[item.k];
+        return {
+          k: item.k,
+          name: text.name,
+          hint: text.hint,
+          unit: item.unit,
+          min: item.min,
+          max: item.max,
+          step: item.step,
+          radius: item.radius,
+        };
+      }),
+    };
+  });
+}
