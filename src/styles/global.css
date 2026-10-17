@@ -29,8 +29,9 @@ img {
   --line: #dde1e8;
   --accent: #0a68f5;
   --accent-ink: #ffffff;
-  --seg-bg: #e7eaf0;
-  --seg-on: #ffffff;
+  /* riel y pastilla del segmentado: tintas translúcidas (se resuelven por tema con --bg/--surface) */
+  --seg-bg: color-mix(in srgb, var(--bg) 20%, transparent);
+  --seg-on: color-mix(in srgb, var(--surface) 40%, transparent);
   --track: #c3c9d4;
   --code-bg: #eceff4;
   --code-fg: #1c2230;
@@ -55,8 +56,6 @@ img {
     --line: #262b36;
     --accent: #4c9aff;
     --accent-ink: #06101f;
-    --seg-bg: #0c0e12;
-    --seg-on: #2b3243;
     --track: #3a4152;
     --code-bg: #0e1118;
     --code-fg: #d9deea;
@@ -78,8 +77,6 @@ img {
   --line: #262b36;
   --accent: #4c9aff;
   --accent-ink: #06101f;
-  --seg-bg: #0c0e12;
-  --seg-on: #2b3243;
   --track: #3a4152;
   --code-bg: #0e1118;
   --code-fg: #d9deea;
@@ -417,10 +414,16 @@ h2 {
 .seg {
   display: inline-flex;
   flex-wrap: wrap;
+  position: relative;
   background: var(--seg-bg);
+  -webkit-backdrop-filter: blur(10px) saturate(150%);
+  backdrop-filter: blur(10px) saturate(150%);
   border-radius: 10px;
   padding: 3px;
   gap: 2px;
+  box-shadow:
+    inset 0 1px 0 0 var(--glass-hilite),
+    inset 0 0 0 1px var(--glass-edge);
 }
 .seg button {
   font: 500 13px/1 var(--font);
@@ -445,9 +448,12 @@ h2 {
 .seg button[aria-checked="true"] {
   background: var(--seg-on);
   color: var(--fg);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  backdrop-filter: blur(12px) saturate(180%);
   box-shadow:
-    0 1px 2px rgba(var(--sh-hue), 0.16),
-    0 0 0 0.5px var(--line);
+    inset 0 1px 0 0 var(--glass-hilite),
+    inset 0 0 0 1px var(--glass-edge),
+    0 2px 6px -2px rgba(var(--sh-hue), 0.45);
 }
 .seg button:focus-visible {
   outline: 2px solid var(--accent);
