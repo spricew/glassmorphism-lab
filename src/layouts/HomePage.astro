@@ -165,7 +165,7 @@ const ld = buildLd({ canonical, ogImage, lang });
       <div class="steps" id="steps">
         {
           frosted.steps.map((s, i) => (
-            <StepCard index={i} title={s.t} desc={s.d} panel={miniPanelHTML} />
+            <StepCard index={i} title={s.t} desc={s.d} panel={miniPanelHTML} class="fade-up" />
           ))
         }
       </div>
@@ -175,7 +175,7 @@ const ld = buildLd({ canonical, ogImage, lang });
       <div class="tries">
         {
           tries(lang).map(({ t, d: desc }) => (
-            <div class="try">
+            <div class="try fade-up">
               <strong>{t}</strong>
               <p>{desc}</p>
             </div>
@@ -233,7 +233,7 @@ const ld = buildLd({ canonical, ogImage, lang });
 
     <BuildSection id="hFaq" title={d.build.faqTitle}>
       <div class="faq">
-        {faq(lang).map((item) => <FaqItem {...item} />)}
+        {faq(lang).map((item) => <FaqItem {...item} class="fade-up" />)}
       </div>
     </BuildSection>
   </main>
