@@ -22,19 +22,19 @@ export const GET: APIRoute = ({ site, url }) => {
         src: icon("favicon-192.png"),
         sizes: "192x192",
         type: "image/png",
-        purpose: "any maskable",
+        purpose: "any",
       },
       {
         src: icon("favicon-512.png"),
         sizes: "512x512",
         type: "image/png",
-        purpose: "any maskable",
+        purpose: "any",
       },
       {
         src: icon("favicon.svg"),
         sizes: "any",
         type: "image/svg+xml",
-        purpose: "any maskable",
+        purpose: "any",
       },
     ],
   };
