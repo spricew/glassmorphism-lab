@@ -14,6 +14,8 @@ import { panelHTML, shell } from "../lab/panels.ts";
 import { getDict, type Lang } from "../lib/i18n.ts";
 import geistLatin from "../fonts/geist-latin.woff2?url";
 import geistMonoLatin from "../fonts/geist-mono-latin.woff2?url";
+/* el fondo ambiente lo referencia el CSS y se descubre tarde: se precarga con el mismo hash */
+import meshBg from "../assets/mesh-bg.jpg?url";
 
 export interface Props {
   lang: Lang;
@@ -30,6 +32,7 @@ const abs = (file: string) =>
 
 const ogImage = abs("og-image.webp");
 const fontPreloads = [geistLatin, geistMonoLatin];
+const imagePreloads = [meshBg];
 
 const bgOptions: SegItem[] = Object.entries(d.stage.bgOptions).map(
   ([v, label]) => ({ v, label }),
@@ -72,6 +75,7 @@ const ld = buildLd({ canonical, ogImage, lang });
   ogImageAlt={d.home.ogAlt}
   ld={ld}
   fontPreloads={fontPreloads}
+  imagePreloads={imagePreloads}
 >
   <header>
     <Nav lang={lang} />

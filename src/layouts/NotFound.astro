@@ -4,6 +4,8 @@ import Base from "./Base.astro";
 import { altLocalePath, getDict, type Lang } from "../lib/i18n.ts";
 import geistLatin from "../fonts/geist-latin.woff2?url";
 import geistMonoLatin from "../fonts/geist-mono-latin.woff2?url";
+/* el fondo ambiente lo referencia el CSS y se descubre tarde: se precarga con el mismo hash */
+import meshBg from "../assets/mesh-bg.jpg?url";
 
 export interface Props {
   lang: Lang;
@@ -21,6 +23,7 @@ const altUrls = {
 };
 
 const fontPreloads = [geistLatin, geistMonoLatin];
+const imagePreloads = [meshBg];
 ---
 
 <Base
@@ -30,6 +33,7 @@ const fontPreloads = [geistLatin, geistMonoLatin];
   robots="noindex, follow"
   wrapClass="wrap wrap-404"
   fontPreloads={fontPreloads}
+  imagePreloads={imagePreloads}
   altUrls={altUrls}
 >
   <main id="main" tabindex="-1">

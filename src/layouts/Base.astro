@@ -18,6 +18,8 @@ export interface Props {
   ld?: Record<string, unknown>;
   wrapClass?: string;
   fontPreloads: string[];
+  /** Imágenes que se descubren tarde (p. ej. el fondo ambiente, que vive en el CSS). */
+  imagePreloads?: string[];
   /** Alternativas hreflang explícitas (p. ej. en el 404, que apunta al inicio). */
   altUrls?: { es: string; en: string };
 }
@@ -33,6 +35,7 @@ const {
   ld,
   wrapClass = "wrap",
   fontPreloads,
+  imagePreloads,
   altUrls,
 } = Astro.props;
 
@@ -120,6 +123,11 @@ const altEn =
     {
       fontPreloads.map((href) => (
         <link rel="preload" as="font" type="font/woff2" href={href} crossorigin />
+      ))
+    }
+    {
+      imagePreloads?.map((href) => (
+        <link rel="preload" as="image" href={href} />
       ))
     }
     {ld && <script type="application/ld+json" set:html={JSON.stringify(ld)} />}
