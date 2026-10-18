@@ -241,8 +241,12 @@ const ld = buildLd({ canonical, ogImage, lang });
   <Fragment slot="bodyEnd">
     <script>
       import { initLab } from "../lab/main.ts";
+      import { initReveal } from "../lib/reveal.ts";
       import { makeFrosted } from "../lib/frosted/index.ts";
       import { currentLang } from "../lib/i18n.ts";
+      /* primero el revelado: es independiente del laboratorio y queda listo
+         aunque initLab tarde o falle */
+      initReveal();
       initLab(makeFrosted(currentLang()));
     </script>
   </Fragment>

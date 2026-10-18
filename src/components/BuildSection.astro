@@ -8,7 +8,7 @@ export interface Props {
 const { id, title, lede } = Astro.props;
 ---
 
-<section class="build" aria-labelledby={id}>
+<section class="build" data-reveal aria-labelledby={id}>
   {
     lede ? (
       <div>

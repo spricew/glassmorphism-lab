@@ -58,6 +58,12 @@ const altEn =
       name="viewport"
       content="width=device-width,initial-scale=1,viewport-fit=cover"
     />
+    {/* marca JS activo antes del primer pintado: las secciones con
+        data-reveal solo se ocultan si habrá un script que las revele, y así
+        no hay destello ni contenido escondido sin JS */}
+    <script is:inline>
+      document.documentElement.classList.add("js");
+    </script>
     <title>{title}</title>
     <meta name="description" content={description} />
     {author && <meta name="author" content={author} />}
