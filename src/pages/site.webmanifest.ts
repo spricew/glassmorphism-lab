@@ -31,6 +31,14 @@ export const GET: APIRoute = ({ site, url }) => {
         purpose: "any",
       },
       {
+        /* para mascarillas: el matraz vive dentro de la zona segura (el 80 %
+           central), así que el mosaico hace de fondo a sangre completa */
+        src: icon("favicon-512.png"),
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "maskable",
+      },
+      {
         src: icon("favicon.svg"),
         sizes: "any",
         type: "image/svg+xml",
