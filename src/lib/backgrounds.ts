@@ -1,9 +1,10 @@
 import { currentLang, getDict, type Lang } from "./i18n.js";
 import type { BackgroundId } from "./material.js";
-import lakeBg from "../assets/bg-lake.webp?url";
-import forestBg from "../assets/bg-forest.webp?url";
 
 /* fondos (SVG en data URI, con bordes nítidos para que el blur se note) */
+import forestPhoto from "../assets/photos/bg-forest.webp?url";
+import lakePhoto from "../assets/photos/bg-lake.webp?url";
+
 const SVG_OPEN =
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">';
 const FONT = 'font-family="Helvetica, Arial, sans-serif"';
@@ -116,21 +117,29 @@ function feedSVG(lang: Lang): string {
   return SVG_OPEN + "<defs>" + defs + "</defs>" + out + "</svg>";
 }
 
-/* Los SVG vectoriales viajan como data URI: sus bordes nítidos hacen visible el
-   desenfoque. Las fotos son assets reales del build (se cargan solo al elegirlas). */
-function svgUrl(svg: string): string {
-  return 'url("data:image/svg+xml;utf8,' + encodeURIComponent(svg) + '")';
-}
 const BGS: Record<BackgroundId, (lang: Lang) => string> = {
-  mosaic: () => svgUrl(mosaicSVG()),
-  sunset: () => svgUrl(sunsetSVG()),
-  feed: (lang) => svgUrl(feedSVG(lang)),
-  lake: () => `url("${lakeBg}")`,
-  forest: () => `url("${forestBg}")`,
+  mosaic: () => mosaicSVG(),
+  sunset: () => sunsetSVG(),
+  feed: feedSVG,
+  lake: () => lakePhoto,
+  forest: () => forestPhoto,
 };
 const bgCache: Partial<Record<string, string>> = {};
-export function bgUrl(k: BackgroundId, lang: Lang = currentLang()): string {
+export function bgUrl(
+  k: BackgroundId,
+  lang: Lang = currentLang(),
+): string {
   const key = k + ":" + lang;
-  if (!bgCache[key]) bgCache[key] = BGS[k](lang);
+  if (!bgCache[key]) {
+    const gen = BGS[k](lang);
+    if (k === "lake" || k === "forest") {
+      bgCache[key] = "url(" + gen + ")";
+      return bgCache[key];
+    }
+    bgCache[key] =
+      'url("data:image/svg+xml;utf8,' +
+      encodeURIComponent(gen) +
+      '")';
+  }
   return bgCache[key];
 }

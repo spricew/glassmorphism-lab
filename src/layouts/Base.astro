@@ -113,12 +113,9 @@ const altEn =
     />
     {
       fontPreloads.map((href) => (
-        <link rel="preload" as="font" type="font/woff2" href={href} crossorigin fetchpriority="high" />
+        <link rel="preload" as="font" type="font/woff2" href={href} crossorigin />
       ))
     }
-    {ogImage && (
-      <link rel="preload" as="image" href={ogImage} type="image/webp" fetchpriority="low" />
-    )}
     {ld && <script type="application/ld+json" set:html={JSON.stringify(ld)} />}
   </head>
   <body>

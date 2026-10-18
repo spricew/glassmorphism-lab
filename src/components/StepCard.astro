@@ -4,12 +4,12 @@ export interface Props {
   title: string;
   desc: string;
   panel: string;
-  class?: string;
 }
 
-const { index, title, desc, panel, class: cls } = Astro.props;
+const { index, title, desc, panel } = Astro.props;
 ---
-<article class:list={["step", cls]}>
+
+<article class="step">
   <div class="mini" data-i={index} aria-hidden="true">
     <div class="gl" set:html={panel} />
   </div>

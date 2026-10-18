@@ -988,14 +988,6 @@ a {
   .codebox {
     animation: rise 0.55s var(--ease-out) 220ms both;
   }
-  /* revelado al hacer scroll: elementos bajo el primer fold */
-  .fade-up {
-    opacity: 0;
-    translate: 0 12px;
-    animation: rise 0.6s var(--ease-out) both;
-    animation-timeline: view();
-    animation-range: entry 10% cover 22%;
-  }
   /* la pastilla seleccionada del segmentado aparece con un pulso corto */
   @keyframes seg-on {
     from {
@@ -1093,10 +1085,8 @@ a {
   .faq-item summary,
   .faq-icon,
   .faq-item p,
-  .faq-item::details-content,
-  .fade-up {
+  .faq-item::details-content {
     transition: none;
-    animation: none;
   }
   .btn:active,
   .seg button:active,
